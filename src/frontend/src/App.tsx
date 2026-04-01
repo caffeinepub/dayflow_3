@@ -6,7 +6,6 @@ import {
   Cake,
   CheckSquare,
   LayoutDashboard,
-  TrendingUp,
   Zap,
 } from "lucide-react";
 import { motion } from "motion/react";
@@ -14,9 +13,7 @@ import { useEffect, useState } from "react";
 import BirthdayCard from "./components/BirthdayCard";
 import DevotionCard from "./components/DevotionCard";
 import EventsCard from "./components/EventsCard";
-import HabitCard from "./components/HabitCard";
 import JournalCard from "./components/JournalCard";
-import PomodoroCard from "./components/PomodoroCard";
 import TasksCard from "./components/TasksCard";
 import { useActor } from "./hooks/useActor";
 
@@ -36,7 +33,6 @@ const QUOTES = [
 const NAV_ITEMS = [
   { label: "Dashboard", icon: LayoutDashboard },
   { label: "Tasks", icon: CheckSquare },
-  { label: "Habits", icon: TrendingUp },
   { label: "Journal", icon: BookOpen },
   { label: "Birthdays", icon: Cake },
   { label: "Devotion", icon: BookMarked },
@@ -202,40 +198,26 @@ export default function App() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <PomodoroCard />
+            <JournalCard />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
           >
-            <HabitCard />
+            <EventsCard />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <JournalCard />
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25 }}
-          >
-            <EventsCard />
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
             <BirthdayCard />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35 }}
+            transition={{ delay: 0.25 }}
           >
             <DevotionCard />
           </motion.div>
