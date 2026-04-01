@@ -172,7 +172,7 @@ export default function BirthdayCard() {
   const daysInSelectedMonth = month ? getDaysInMonth(Number(month)) : 31;
 
   return (
-    <div className="rounded-2xl border border-white/[0.06] bg-df-navy-mid shadow-card card-glow flex flex-col h-full min-h-[340px] p-5">
+    <div className="rounded-2xl border border-white/[0.06] bg-df-navy-mid shadow-card card-glow flex flex-col min-h-[340px] p-5">
       {/* Header */}
       <div className="flex items-center gap-2 mb-4">
         <div className="w-8 h-8 rounded-xl bg-pink-500/10 flex items-center justify-center">
@@ -284,7 +284,7 @@ export default function BirthdayCard() {
       {/* Loading */}
       {isLoading && (
         <div
-          className="flex-1 flex items-center justify-center"
+          className="flex items-center justify-center py-8"
           data-ocid="birthdays.loading_state"
         >
           <Loader2 className="w-5 h-5 text-df-text-muted animate-spin" />
@@ -293,7 +293,7 @@ export default function BirthdayCard() {
 
       {/* Contact list */}
       {!isLoading && (
-        <div className="flex-1 overflow-y-auto scrollbar-thin space-y-1">
+        <div className="space-y-1">
           <AnimatePresence initial={false}>
             {sorted.length === 0 && (
               <motion.div
