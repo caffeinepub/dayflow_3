@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -7,7 +6,6 @@ import {
   Cake,
   CheckSquare,
   LayoutDashboard,
-  LogOut,
   TrendingUp,
   Zap,
 } from "lucide-react";
@@ -18,11 +16,9 @@ import DevotionCard from "./components/DevotionCard";
 import EventsCard from "./components/EventsCard";
 import HabitCard from "./components/HabitCard";
 import JournalCard from "./components/JournalCard";
-import MoodCard from "./components/MoodCard";
 import PomodoroCard from "./components/PomodoroCard";
 import TasksCard from "./components/TasksCard";
 import { useActor } from "./hooks/useActor";
-import { useInternetIdentity } from "./hooks/useInternetIdentity";
 
 const QUOTES = [
   "The secret of getting ahead is getting started.",
@@ -111,8 +107,6 @@ function BirthdayAlertBanner() {
 }
 
 export default function App() {
-  const { login, clear, loginStatus, isLoginError, identity, isInitializing } =
-    useInternetIdentity();
   const [activeNav, setActiveNav] = useState("Dashboard");
 
   useEffect(() => {
@@ -129,63 +123,6 @@ export default function App() {
     month: "long",
     day: "numeric",
   });
-  const principal = identity?.getPrincipal().toString();
-  const shortPrincipal = principal
-    ? `${principal.slice(0, 5)}...${principal.slice(-3)}`
-    : "";
-
-  if (isInitializing) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <Zap className="w-10 h-10 text-df-teal animate-pulse" />
-          <p className="text-df-text-muted text-sm">Loading DayFlow...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!identity) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-6">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="max-w-md w-full rounded-2xl border border-white/[0.06] bg-df-navy-mid shadow-card p-10 flex flex-col items-center gap-6 text-center"
-          data-ocid="login.modal"
-        >
-          <div className="w-14 h-14 rounded-2xl bg-df-teal-dim flex items-center justify-center">
-            <Zap className="w-7 h-7 text-df-teal" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-semibold text-df-text mb-2">
-              Welcome to DayFlow
-            </h1>
-            <p className="text-df-text-muted text-sm leading-relaxed">
-              Your intelligent daily companion. Track tasks, habits, mood, and
-              more \u2014 all in one place.
-            </p>
-          </div>
-          <Button
-            onClick={login}
-            disabled={loginStatus === "logging-in"}
-            className="w-full bg-df-teal text-df-navy font-semibold hover:bg-df-teal/90 h-11 text-sm"
-            data-ocid="login.primary_button"
-          >
-            {loginStatus === "logging-in"
-              ? "Signing in..."
-              : "Sign in to get started"}
-          </Button>
-          {isLoginError && (
-            <p className="text-df-red text-xs" data-ocid="login.error_state">
-              Login failed. Please try again.
-            </p>
-          )}
-        </motion.div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -224,24 +161,6 @@ export default function App() {
               </button>
             ))}
           </nav>
-
-          <div className="flex items-center gap-3 min-w-fit">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-df-teal to-df-purple flex items-center justify-center text-xs font-semibold text-white">
-              {shortPrincipal.slice(0, 1).toUpperCase()}
-            </div>
-            <span className="text-xs text-df-text-muted hidden sm:block">
-              {shortPrincipal}
-            </span>
-            <button
-              type="button"
-              onClick={clear}
-              data-ocid="nav.logout.button"
-              className="text-df-text-muted hover:text-df-red transition-colors p-1 rounded"
-              title="Sign out"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-            </button>
-          </div>
         </div>
       </header>
 
@@ -290,40 +209,33 @@ export default function App() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
           >
-            <MoodCard />
+            <HabitCard />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <HabitCard />
+            <JournalCard />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25 }}
           >
-            <JournalCard />
+            <EventsCard />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <EventsCard />
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35 }}
-          >
             <BirthdayCard />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
+            transition={{ delay: 0.35 }}
           >
             <DevotionCard />
           </motion.div>
