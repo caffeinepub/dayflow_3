@@ -1,20 +1,24 @@
 import { Toaster } from "@/components/ui/sonner";
 import { useQuery } from "@tanstack/react-query";
 import {
+  Activity,
   BookMarked,
   BookOpen,
   Cake,
   CheckSquare,
   ChevronLeft,
   ChevronRight,
+  Heart,
   LayoutDashboard,
   Zap,
 } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import BirthdayCard from "./components/BirthdayCard";
+import ChristianChecklistCard from "./components/ChristianChecklistCard";
 import DevotionCard from "./components/DevotionCard";
 import EventsCard from "./components/EventsCard";
+import FitnessChecklistCard from "./components/FitnessChecklistCard";
 import JournalCard from "./components/JournalCard";
 import TasksCard from "./components/TasksCard";
 import { useActor } from "./hooks/useActor";
@@ -38,6 +42,8 @@ const NAV_ITEMS = [
   { label: "Journal", icon: BookOpen },
   { label: "Birthdays", icon: Cake },
   { label: "Devotion", icon: BookMarked },
+  { label: "Faith", icon: Heart },
+  { label: "Fitness", icon: Activity },
 ];
 
 function daysUntilBirthday(month: number, day: number): number {
@@ -246,45 +252,67 @@ export default function App() {
         <BirthdayAlertBanner />
       </div>
 
-      {/* Dashboard grid */}
+      {/* Main content */}
       <main className="max-w-[1200px] mx-auto px-6 pb-10 w-full flex-1">
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 }}
-          >
-            <TasksCard dateKey={dateKey} />
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            <JournalCard dateKey={dateKey} />
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 }}
-          >
-            <EventsCard selectedDate={dateKey} />
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <BirthdayCard />
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25 }}
-          >
-            <DevotionCard dayOfYear={dayOfYear} />
-          </motion.div>
-        </div>
+        {activeNav === "Dashboard" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 }}
+            >
+              <TasksCard dateKey={dateKey} />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <JournalCard dateKey={dateKey} />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+            >
+              <EventsCard selectedDate={dateKey} />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <BirthdayCard />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+            >
+              <DevotionCard dayOfYear={dayOfYear} />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <ChristianChecklistCard />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.35 }}
+            >
+              <FitnessChecklistCard />
+            </motion.div>
+          </div>
+        )}
+        {activeNav === "Tasks" && <TasksCard dateKey={dateKey} />}
+        {activeNav === "Journal" && <JournalCard dateKey={dateKey} />}
+        {activeNav === "Birthdays" && <BirthdayCard />}
+        {activeNav === "Devotion" && <DevotionCard dayOfYear={dayOfYear} />}
+        {activeNav === "Faith" && <ChristianChecklistCard />}
+        {activeNav === "Fitness" && <FitnessChecklistCard />}
       </main>
 
       {/* Footer */}

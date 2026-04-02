@@ -1,5 +1,6 @@
-import { BookMarked } from "lucide-react";
+import { BookMarked, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "motion/react";
+import React from "react";
 
 interface VerseData {
   reference: string;
@@ -2879,7 +2880,13 @@ interface DevotionCardProps {
 }
 
 export default function DevotionCard({ dayOfYear }: DevotionCardProps) {
-  const devotion = VERSES[(dayOfYear - 1) % VERSES.length];
+  const [offset, setOffset] = React.useState(0);
+
+  const displayedDay = Math.min(365, Math.max(1, dayOfYear + offset));
+  const devotion = VERSES[displayedDay - 1];
+
+  const canGoPrev = displayedDay > 1;
+  const canGoNext = displayedDay < 365;
 
   return (
     <div className="rounded-2xl border border-amber-500/20 bg-df-navy-mid shadow-card flex flex-col h-full min-h-[340px] p-5 relative overflow-hidden">
@@ -2888,23 +2895,61 @@ export default function DevotionCard({ dayOfYear }: DevotionCardProps) {
 
       {/* Header */}
       <div className="flex items-center gap-2 mb-4 relative">
-        <div className="w-8 h-8 rounded-xl bg-amber-500/15 flex items-center justify-center">
+        <div className="w-8 h-8 rounded-xl bg-amber-500/15 flex items-center justify-center flex-shrink-0">
           <BookMarked className="w-4 h-4 text-amber-400" />
         </div>
-        <div>
+        <div className="flex-1 min-w-0">
           <h3 className="text-sm font-semibold text-df-text">Daily Devotion</h3>
-          <p className="text-[10px] text-amber-400/70">
-            Day {dayOfYear} of 365
-          </p>
+          <div className="flex items-center gap-1.5">
+            <p className="text-[10px] text-amber-400/70">
+              {offset === 0
+                ? `Today · Day ${displayedDay} of 365`
+                : `Day ${displayedDay} of 365`}
+            </p>
+            {offset !== 0 && (
+              <button
+                type="button"
+                onClick={() => setOffset(0)}
+                className="text-[10px] text-amber-400 hover:text-amber-300 font-medium transition-colors"
+                data-ocid="devotion.toggle"
+              >
+                · Back to Today
+              </button>
+            )}
+          </div>
+        </div>
+        {/* Day navigation arrows */}
+        <div className="flex items-center gap-0.5 flex-shrink-0">
+          <button
+            type="button"
+            onClick={() => setOffset((prev) => prev - 1)}
+            disabled={!canGoPrev}
+            aria-label="Previous devotion"
+            className="text-df-text-muted hover:text-df-text transition-colors p-0.5 rounded-md hover:bg-white/[0.06] disabled:opacity-25 disabled:cursor-not-allowed"
+            data-ocid="devotion.pagination_prev"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setOffset((prev) => prev + 1)}
+            disabled={!canGoNext}
+            aria-label="Next devotion"
+            className="text-df-text-muted hover:text-df-text transition-colors p-0.5 rounded-md hover:bg-white/[0.06] disabled:opacity-25 disabled:cursor-not-allowed"
+            data-ocid="devotion.pagination_next"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
       </div>
 
-      {/* Verse */}
+      {/* Verse — keyed on displayedDay for fade+slide transition */}
       <motion.div
-        key={devotion.reference}
+        key={displayedDay}
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        exit={{ opacity: 0, y: -8 }}
+        transition={{ duration: 0.35 }}
         className="flex-1 flex flex-col gap-4 relative"
         data-ocid="devotion.card"
       >
