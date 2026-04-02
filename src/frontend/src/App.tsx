@@ -6,13 +6,11 @@ import {
   Cake,
   CheckSquare,
   LayoutDashboard,
-  Wallet,
   Zap,
 } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import BirthdayCard from "./components/BirthdayCard";
-import BudgetCard from "./components/BudgetCard";
 import DevotionCard from "./components/DevotionCard";
 import EventsCard from "./components/EventsCard";
 import JournalCard from "./components/JournalCard";
@@ -38,7 +36,6 @@ const NAV_ITEMS = [
   { label: "Journal", icon: BookOpen },
   { label: "Birthdays", icon: Cake },
   { label: "Devotion", icon: BookMarked },
-  { label: "Budget", icon: Wallet },
 ];
 
 function daysUntilBirthday(month: number, day: number): number {
@@ -223,13 +220,6 @@ export default function App() {
             transition={{ delay: 0.25 }}
           >
             <DevotionCard />
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <BudgetCard />
           </motion.div>
         </div>
       </main>
