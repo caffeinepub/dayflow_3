@@ -12,6 +12,10 @@ interface CalEvent {
   createdAt: number;
 }
 
+interface EventsCardProps {
+  selectedDate: string; // YYYY-MM-DD
+}
+
 const STORAGE_KEY = "dayflow_events";
 
 const DEFAULT_EVENTS: CalEvent[] = [
@@ -38,7 +42,7 @@ const DEFAULT_EVENTS: CalEvent[] = [
   },
 ];
 
-export default function EventsCard() {
+export default function EventsCard({ selectedDate }: EventsCardProps) {
   const [events, setEvents] = useState<CalEvent[]>(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
@@ -48,7 +52,12 @@ export default function EventsCard() {
     }
   });
   const [adding, setAdding] = useState(false);
-  const [form, setForm] = useState({ title: "", date: "", time: "" });
+  const [form, setForm] = useState({ title: "", date: selectedDate, time: "" });
+
+  // Update form default date when selectedDate changes
+  useEffect(() => {
+    setForm((f) => ({ ...f, date: selectedDate }));
+  }, [selectedDate]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
@@ -60,16 +69,18 @@ export default function EventsCard() {
       ...prev,
       { id: crypto.randomUUID(), ...form, createdAt: Date.now() },
     ]);
-    setForm({ title: "", date: "", time: "" });
+    setForm({ title: "", date: selectedDate, time: "" });
     setAdding(false);
   };
 
   const remove = (id: string) =>
     setEvents((prev) => prev.filter((e) => e.id !== id));
 
-  const sorted = [...events].sort(
-    (a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time),
-  );
+  // Filter events to show only those matching the selected date
+  const filtered = events
+    .filter((e) => e.date === selectedDate)
+    .sort((a, b) => a.time.localeCompare(b.time));
+
   const today = new Date().toISOString().slice(0, 10);
 
   const formatDate = (dateStr: string) => {
@@ -88,7 +99,7 @@ export default function EventsCard() {
         <div className="w-8 h-8 rounded-xl bg-df-orange-dim flex items-center justify-center">
           <Calendar className="w-4 h-4 text-df-orange" />
         </div>
-        <h3 className="text-sm font-semibold text-df-text">Upcoming Events</h3>
+        <h3 className="text-sm font-semibold text-df-text">Events</h3>
         <button
           type="button"
           onClick={() => setAdding((v) => !v)}
@@ -165,20 +176,20 @@ export default function EventsCard() {
         )}
       </AnimatePresence>
 
-      {/* Events list */}
+      {/* Events list — filtered to selectedDate */}
       <div className="flex-1 overflow-y-auto scrollbar-thin space-y-2">
         <AnimatePresence initial={false}>
-          {sorted.length === 0 && (
+          {filtered.length === 0 && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="text-center py-8 text-df-text-muted text-sm"
               data-ocid="events.empty_state"
             >
-              No upcoming events. Add one!
+              No events on this day. Add one!
             </motion.div>
           )}
-          {sorted.map((event, i) => {
+          {filtered.map((event, i) => {
             const { day, month } = formatDate(event.date);
             const past = isPast(event.date);
             const isToday = event.date === today;
@@ -227,7 +238,9 @@ export default function EventsCard() {
 
                 <div className="flex-1 min-w-0">
                   <p
-                    className={`text-sm font-medium truncate ${past ? "text-df-text-muted" : "text-df-text"}`}
+                    className={`text-sm font-medium truncate ${
+                      past ? "text-df-text-muted" : "text-df-text"
+                    }`}
                   >
                     {event.title}
                   </p>

@@ -11,28 +11,32 @@ interface Task {
   createdAt: number;
 }
 
-const STORAGE_KEY = "dayflow_tasks";
+interface TasksCardProps {
+  dateKey: string;
+}
 
-const DEFAULT_TASKS: Task[] = [
-  { id: "t1", title: "Review morning emails", done: false, createdAt: 1 },
-  { id: "t2", title: "Write project proposal", done: false, createdAt: 2 },
-  { id: "t3", title: "30 minute workout", done: true, createdAt: 3 },
-];
+function loadTasks(dateKey: string): Task[] {
+  try {
+    const stored = localStorage.getItem(`dayflow_tasks_${dateKey}`);
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+}
 
-export default function TasksCard() {
-  const [tasks, setTasks] = useState<Task[]>(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? JSON.parse(stored) : DEFAULT_TASKS;
-    } catch {
-      return DEFAULT_TASKS;
-    }
-  });
+export default function TasksCard({ dateKey }: TasksCardProps) {
+  const [tasks, setTasks] = useState<Task[]>(() => loadTasks(dateKey));
   const [input, setInput] = useState("");
 
+  // Reload tasks when dateKey changes
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-  }, [tasks]);
+    setTasks(loadTasks(dateKey));
+  }, [dateKey]);
+
+  // Persist tasks for current dateKey
+  useEffect(() => {
+    localStorage.setItem(`dayflow_tasks_${dateKey}`, JSON.stringify(tasks));
+  }, [tasks, dateKey]);
 
   const addTask = () => {
     const title = input.trim();
@@ -114,7 +118,7 @@ export default function TasksCard() {
               className="text-center py-8 text-df-text-muted text-sm"
               data-ocid="todo.empty_state"
             >
-              No tasks yet. Add one above!
+              No tasks for this day. Add one above!
             </motion.div>
           )}
           {tasks.map((task, i) => (

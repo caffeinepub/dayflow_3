@@ -5,6 +5,8 @@ import {
   BookOpen,
   Cake,
   CheckSquare,
+  ChevronLeft,
+  ChevronRight,
   LayoutDashboard,
   Zap,
 } from "lucide-react";
@@ -77,7 +79,7 @@ function BirthdayAlertBanner() {
   const first = soonContacts[0];
   const label =
     first.days === 0
-      ? `Today is ${first.name}'s birthday! 🎉`
+      ? `Today is ${first.name}'s birthday! \uD83C\uDF89`
       : `${first.name}'s birthday is in ${first.days} day${first.days === 1 ? "" : "s"}!`;
 
   return (
@@ -89,7 +91,7 @@ function BirthdayAlertBanner() {
     >
       <Cake className="w-4 h-4 text-pink-400 flex-shrink-0" />
       <p className="text-sm text-pink-200">
-        <span className="font-semibold">🎂 Upcoming: </span>
+        <span className="font-semibold">\uD83C\uDF82 Upcoming: </span>
         {label}
         {soonContacts.length > 1 && (
           <span className="text-pink-300/70">
@@ -102,23 +104,48 @@ function BirthdayAlertBanner() {
   );
 }
 
+function getDayOfYear(date: Date): number {
+  return Math.floor(
+    (date.getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / 86400000,
+  );
+}
+
 export default function App() {
   const [activeNav, setActiveNav] = useState("Dashboard");
+  const [selectedDate, setSelectedDate] = useState<Date>(() => new Date());
 
   useEffect(() => {
     document.documentElement.classList.add("dark");
   }, []);
 
-  const now = new Date();
-  const dayOfYear = Math.floor(
-    (now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / 86400000,
-  );
+  const dateKey = selectedDate.toISOString().slice(0, 10);
+  const dayOfYear = getDayOfYear(selectedDate);
   const quote = QUOTES[dayOfYear % QUOTES.length];
-  const dateStr = now.toLocaleDateString("en-US", {
+  const dateStr = selectedDate.toLocaleDateString("en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",
   });
+
+  const today = new Date();
+  const todayKey = today.toISOString().slice(0, 10);
+  const isToday = dateKey === todayKey;
+
+  const goToPrevDay = () => {
+    setSelectedDate((prev) => {
+      const d = new Date(prev);
+      d.setDate(d.getDate() - 1);
+      return d;
+    });
+  };
+
+  const goToNextDay = () => {
+    setSelectedDate((prev) => {
+      const d = new Date(prev);
+      d.setDate(d.getDate() + 1);
+      return d;
+    });
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -163,10 +190,46 @@ export default function App() {
       {/* Page heading */}
       <div className="max-w-[1200px] mx-auto px-6 pt-8 pb-4 w-full">
         <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-df-text-muted text-sm font-medium mb-1">
-              {dateStr}
-            </p>
+          <div className="flex-1">
+            {/* Day navigation */}
+            <div className="flex items-center gap-2 mb-1">
+              <button
+                type="button"
+                onClick={goToPrevDay}
+                data-ocid="nav.prev_day.button"
+                className="text-df-text-muted hover:text-df-text transition-colors p-0.5 rounded-md hover:bg-white/[0.06]"
+                aria-label="Previous day"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <p className="text-df-text-muted text-sm font-medium">
+                {dateStr}
+                {isToday && (
+                  <span className="ml-2 text-[10px] text-df-teal font-semibold uppercase tracking-wider">
+                    Today
+                  </span>
+                )}
+              </p>
+              <button
+                type="button"
+                onClick={goToNextDay}
+                data-ocid="nav.next_day.button"
+                className="text-df-text-muted hover:text-df-text transition-colors p-0.5 rounded-md hover:bg-white/[0.06]"
+                aria-label="Next day"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+              {!isToday && (
+                <button
+                  type="button"
+                  onClick={() => setSelectedDate(new Date())}
+                  data-ocid="nav.today.button"
+                  className="text-[10px] text-df-teal hover:text-df-teal/80 font-medium transition-colors ml-1"
+                >
+                  Back to Today
+                </button>
+              )}
+            </div>
             <h2 className="text-2xl sm:text-3xl font-light text-df-text leading-tight max-w-xl">
               &ldquo;{quote}&rdquo;
             </h2>
@@ -191,21 +254,21 @@ export default function App() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
           >
-            <TasksCard />
+            <TasksCard dateKey={dateKey} />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <JournalCard />
+            <JournalCard dateKey={dateKey} />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
           >
-            <EventsCard />
+            <EventsCard selectedDate={dateKey} />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -219,7 +282,7 @@ export default function App() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25 }}
           >
-            <DevotionCard />
+            <DevotionCard dayOfYear={dayOfYear} />
           </motion.div>
         </div>
       </main>

@@ -8,14 +8,14 @@ import { toast } from "sonner";
 
 const STORAGE_KEY = "dayflow_journal";
 
-function getTodayStr() {
-  return new Date().toISOString().slice(0, 10);
-}
-
 interface JournalEntry {
   title: string;
   body: string;
   savedAt: string;
+}
+
+interface JournalCardProps {
+  dateKey: string;
 }
 
 function loadEntry(dateStr: string): JournalEntry | null {
@@ -37,21 +37,25 @@ function saveEntry(dateStr: string, entry: JournalEntry) {
   }
 }
 
-export default function JournalCard() {
-  const today = getTodayStr();
+export default function JournalCard({ dateKey }: JournalCardProps) {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
+  // Reload entry when dateKey changes
   useEffect(() => {
-    const entry = loadEntry(today);
+    const entry = loadEntry(dateKey);
     if (entry) {
       setTitle(entry.title);
       setBody(entry.body);
       setSaved(true);
+    } else {
+      setTitle("");
+      setBody("");
+      setSaved(false);
     }
-  }, [today]);
+  }, [dateKey]);
 
   const handleSave = async () => {
     if (!title.trim() && !body.trim()) {
@@ -60,17 +64,20 @@ export default function JournalCard() {
     }
     setSaving(true);
     await new Promise((r) => setTimeout(r, 400));
-    saveEntry(today, { title, body, savedAt: new Date().toISOString() });
+    saveEntry(dateKey, { title, body, savedAt: new Date().toISOString() });
     setSaving(false);
     setSaved(true);
     toast.success("Journal entry saved!");
   };
 
-  const displayDate = new Date().toLocaleDateString("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-  });
+  const displayDate = new Date(`${dateKey}T00:00:00`).toLocaleDateString(
+    "en-US",
+    {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+    },
+  );
 
   return (
     <div
@@ -95,7 +102,7 @@ export default function JournalCard() {
             animate={{ opacity: 1, scale: 1 }}
             className="ml-auto text-[10px] bg-white/10 text-white/70 rounded-full px-2 py-0.5"
           >
-            Saved ✓
+            Saved \u2713
           </motion.span>
         )}
       </div>
