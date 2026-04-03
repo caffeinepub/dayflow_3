@@ -1,5 +1,12 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,300;1,400&display=swap");
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  src: url("/assets/fonts/PlusJakartaSans.woff2") format("woff2");
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 @tailwind base;
 @tailwind components;
@@ -9,38 +16,38 @@
   :root {
     --radius: 1rem;
     /* DayFlow dark navy theme — always dark */
-    --background: 0.12 0.035 240;
-    --foreground: 0.95 0.02 240;
-    --card: 0.17 0.045 240;
-    --card-foreground: 0.95 0.02 240;
-    --popover: 0.2 0.05 240;
-    --popover-foreground: 0.95 0.02 240;
-    --primary: 0.65 0.22 25;
-    --primary-foreground: 0.95 0.02 240;
-    --secondary: 0.22 0.05 240;
-    --secondary-foreground: 0.95 0.02 240;
-    --muted: 0.2 0.04 240;
-    --muted-foreground: 0.67 0.05 240;
-    --accent: 0.65 0.22 25;
-    --accent-foreground: 0.95 0.02 240;
-    --destructive: 0.62 0.22 25;
-    --destructive-foreground: 0.95 0.02 240;
-    --border: 0.3 0.04 240;
-    --input: 0.22 0.05 240;
-    --ring: 0.65 0.22 25;
-    --chart-1: 0.65 0.22 25;
+    --background: 0.11 0.04 245;
+    --foreground: 0.96 0.01 240;
+    --card: 0.15 0.05 245;
+    --card-foreground: 0.96 0.01 240;
+    --popover: 0.18 0.05 245;
+    --popover-foreground: 0.96 0.01 240;
+    --primary: 0.62 0.26 22;
+    --primary-foreground: 0.96 0.01 240;
+    --secondary: 0.2 0.05 245;
+    --secondary-foreground: 0.96 0.01 240;
+    --muted: 0.18 0.04 245;
+    --muted-foreground: 0.6 0.05 240;
+    --accent: 0.62 0.26 22;
+    --accent-foreground: 0.96 0.01 240;
+    --destructive: 0.62 0.26 22;
+    --destructive-foreground: 0.96 0.01 240;
+    --border: 0.28 0.05 245;
+    --input: 0.2 0.05 245;
+    --ring: 0.62 0.26 22;
+    --chart-1: 0.62 0.26 22;
     --chart-2: 0.76 0.17 155;
-    --chart-3: 0.47 0.22 275;
+    --chart-3: 0.62 0.22 280;
     --chart-4: 0.75 0.18 50;
     --chart-5: 0.78 0.14 185;
-    --sidebar: 0.15 0.04 240;
-    --sidebar-foreground: 0.95 0.02 240;
-    --sidebar-primary: 0.65 0.22 25;
-    --sidebar-primary-foreground: 0.95 0.02 240;
-    --sidebar-accent: 0.2 0.04 240;
-    --sidebar-accent-foreground: 0.95 0.02 240;
-    --sidebar-border: 0.28 0.04 240;
-    --sidebar-ring: 0.65 0.22 25;
+    --sidebar: 0.13 0.04 245;
+    --sidebar-foreground: 0.96 0.01 240;
+    --sidebar-primary: 0.62 0.26 22;
+    --sidebar-primary-foreground: 0.96 0.01 240;
+    --sidebar-accent: 0.18 0.04 245;
+    --sidebar-accent-foreground: 0.96 0.01 240;
+    --sidebar-border: 0.26 0.04 245;
+    --sidebar-ring: 0.62 0.26 22;
   }
 
   * {
@@ -55,34 +62,78 @@
     @apply bg-background text-foreground font-sans antialiased;
     background: linear-gradient(
       160deg,
-      oklch(0.12 0.035 240) 0%,
-      oklch(0.09 0.03 240) 100%
+      oklch(0.11 0.04 245) 0%,
+      oklch(0.08 0.03 250) 60%,
+      oklch(0.1 0.05 260) 100%
     );
     min-height: 100vh;
   }
 }
 
 @layer utilities {
+  /* Red card glow */
   .card-glow {
     transition: box-shadow 0.25s ease, transform 0.25s ease;
   }
   .card-glow:hover {
-    box-shadow: 0 0 0 1px oklch(0.65 0.22 25 / 0.25), 0 8px 32px
-      oklch(0.65 0.22 25 / 0.08);
+    box-shadow: 0 0 0 1px oklch(0.62 0.26 22 / 0.3), 0 8px 32px
+      oklch(0.62 0.26 22 / 0.12);
     transform: translateY(-2px);
   }
-  .teal-glow {
-    box-shadow: 0 0 20px oklch(0.65 0.22 25 / 0.3);
+
+  /* Gold glow (Devotion widget) */
+  .card-gold-glow {
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
   }
+  .card-gold-glow:hover {
+    box-shadow: 0 0 0 1px oklch(0.78 0.16 75 / 0.3), 0 8px 32px
+      oklch(0.78 0.16 75 / 0.1);
+    transform: translateY(-2px);
+  }
+
+  /* Emerald glow (Habits widget) */
+  .card-emerald-glow {
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+  }
+  .card-emerald-glow:hover {
+    box-shadow: 0 0 0 1px oklch(0.72 0.18 158 / 0.3), 0 8px 32px
+      oklch(0.72 0.18 158 / 0.1);
+    transform: translateY(-2px);
+  }
+
+  /* Sky glow (Bible Reader widget) */
+  .card-sky-glow {
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+  }
+  .card-sky-glow:hover {
+    box-shadow: 0 0 0 1px oklch(0.72 0.17 225 / 0.3), 0 8px 32px
+      oklch(0.72 0.17 225 / 0.1);
+    transform: translateY(-2px);
+  }
+
+  /* Violet glow (Journal widget) */
+  .card-violet-glow {
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+  }
+  .card-violet-glow:hover {
+    box-shadow: 0 0 0 1px oklch(0.62 0.22 280 / 0.35), 0 8px 32px
+      oklch(0.62 0.22 280 / 0.12);
+    transform: translateY(-2px);
+  }
+
+  .teal-glow {
+    box-shadow: 0 0 20px oklch(0.62 0.26 22 / 0.3);
+  }
+
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: oklch(0.3 0.04 240) transparent;
+    scrollbar-color: oklch(0.28 0.05 245) transparent;
   }
   .scrollbar-thin::-webkit-scrollbar {
     width: 4px;
   }
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: oklch(0.3 0.04 240);
+    background: oklch(0.28 0.05 245);
     border-radius: 9999px;
   }
 

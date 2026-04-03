@@ -170,13 +170,16 @@ export default function BibleReaderCard() {
 
   return (
     <div
-      className="bg-df-navy-light border border-white/[0.06] rounded-2xl p-5 flex flex-col gap-4 shadow-card min-h-[600px]"
+      className="bg-gradient-to-br from-df-navy-mid to-[oklch(0.16_0.06_225)] border border-df-sky/20 rounded-2xl p-5 flex flex-col gap-4 shadow-card card-sky-glow min-h-[600px] relative overflow-hidden"
       data-ocid="bible.card"
     >
+      {/* Sky glow blob */}
+      <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-df-sky/[0.08] blur-3xl pointer-events-none" />
+
       {/* Header */}
       <div className="flex items-center gap-2.5">
-        <div className="w-8 h-8 rounded-xl bg-df-red-dim flex items-center justify-center flex-shrink-0">
-          <Library className="w-4 h-4 text-df-red" />
+        <div className="w-8 h-8 rounded-xl bg-df-sky-dim flex items-center justify-center flex-shrink-0 ring-1 ring-df-sky/30">
+          <Library className="w-4 h-4 text-df-sky" />
         </div>
         <div className="flex-1 min-w-0">
           <h2 className="text-sm font-semibold text-df-text leading-tight">
@@ -195,7 +198,7 @@ export default function BibleReaderCard() {
         <select
           value={selectedBook}
           onChange={(e) => handleBookChange(e.target.value)}
-          className="flex-1 bg-df-navy border border-white/[0.08] text-df-text text-sm font-medium rounded-xl px-3 py-2 focus:outline-none focus:ring-1 focus:ring-df-red cursor-pointer"
+          className="flex-1 bg-df-navy border border-white/[0.08] text-df-text text-sm font-medium rounded-xl px-3 py-2 focus:outline-none focus:ring-1 focus:ring-df-sky cursor-pointer"
           aria-label="Select book"
         >
           <optgroup label="Old Testament">
@@ -217,7 +220,7 @@ export default function BibleReaderCard() {
         <select
           value={selectedChapter}
           onChange={(e) => setSelectedChapter(Number(e.target.value))}
-          className="w-20 bg-df-navy border border-white/[0.08] text-df-text text-sm font-medium rounded-xl px-3 py-2 focus:outline-none focus:ring-1 focus:ring-df-red cursor-pointer"
+          className="w-20 bg-df-navy border border-white/[0.08] text-df-text text-sm font-medium rounded-xl px-3 py-2 focus:outline-none focus:ring-1 focus:ring-df-sky cursor-pointer"
           aria-label="Select chapter"
         >
           {Array.from({ length: maxChapters }, (_, i) => i + 1).map((ch) => (
@@ -231,7 +234,7 @@ export default function BibleReaderCard() {
           type="button"
           onClick={handlePrevChapter}
           disabled={isFirstChapterOfFirst}
-          className="w-9 h-9 flex items-center justify-center rounded-xl text-df-text-muted hover:text-df-text hover:bg-white/[0.06] disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex-shrink-0"
+          className="w-9 h-9 flex items-center justify-center rounded-xl text-df-text-muted hover:text-df-text hover:bg-df-sky/[0.08] disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex-shrink-0"
           data-ocid="bible.pagination_prev"
           aria-label="Previous chapter"
         >
@@ -242,7 +245,7 @@ export default function BibleReaderCard() {
           type="button"
           onClick={handleNextChapter}
           disabled={isLastChapterOfLast}
-          className="w-9 h-9 flex items-center justify-center rounded-xl text-df-text-muted hover:text-df-text hover:bg-white/[0.06] disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex-shrink-0"
+          className="w-9 h-9 flex items-center justify-center rounded-xl text-df-text-muted hover:text-df-text hover:bg-df-sky/[0.08] disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex-shrink-0"
           data-ocid="bible.pagination_next"
           aria-label="Next chapter"
         >
@@ -253,7 +256,7 @@ export default function BibleReaderCard() {
       {/* Reference label */}
       {reference && !loading && (
         <div className="flex items-center gap-2 -mb-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-df-red flex-shrink-0" />
+          <span className="w-1.5 h-1.5 rounded-full bg-df-sky flex-shrink-0" />
           <p className="text-base font-semibold text-df-text">{reference}</p>
         </div>
       )}
@@ -265,7 +268,7 @@ export default function BibleReaderCard() {
             className="h-72 flex items-center justify-center"
             data-ocid="bible.loading_state"
           >
-            <Loader2 className="w-5 h-5 text-df-red animate-spin" />
+            <Loader2 className="w-5 h-5 text-df-sky animate-spin" />
           </div>
         )}
 
@@ -278,7 +281,7 @@ export default function BibleReaderCard() {
             <button
               type="button"
               onClick={() => setSelectedChapter((c) => c)}
-              className="text-xs text-df-red hover:text-df-red/80 underline underline-offset-2 transition-colors"
+              className="text-xs text-df-sky hover:text-df-sky/80 underline underline-offset-2 transition-colors"
             >
               Try again
             </button>
@@ -289,7 +292,7 @@ export default function BibleReaderCard() {
           <div className="pr-3 space-y-3 pb-2">
             {verses.map((v) => (
               <div key={v.verse} className="flex gap-3 group">
-                <span className="text-[11px] font-bold text-df-red mt-0.5 w-5 flex-shrink-0 leading-5 tabular-nums">
+                <span className="text-[11px] font-bold text-df-sky mt-0.5 w-5 flex-shrink-0 leading-5 tabular-nums">
                   {v.verse}
                 </span>
                 <p className="text-sm text-df-text leading-relaxed flex-1">

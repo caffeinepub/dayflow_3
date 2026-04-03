@@ -83,7 +83,9 @@ function BirthdayAlertBanner() {
   const label =
     first.days === 0
       ? `Today is ${first.name}'s birthday! \uD83C\uDF89`
-      : `${first.name}'s birthday is in ${first.days} day${first.days === 1 ? "" : "s"}!`;
+      : `${first.name}'s birthday is in ${first.days} day${
+          first.days === 1 ? "" : "s"
+        }!`;
 
   return (
     <motion.div
@@ -155,13 +157,13 @@ export default function App() {
       <Toaster position="top-right" />
 
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[oklch(0.14_0.04_240/0.95)] backdrop-blur-md">
+      <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[oklch(0.11_0.04_245/0.97)] backdrop-blur-md">
         <div className="max-w-[1200px] mx-auto px-6 h-14 flex items-center gap-6">
           <div className="flex items-center gap-2 min-w-fit">
-            <div className="w-7 h-7 rounded-lg bg-df-red-dim flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-df-red-dim flex items-center justify-center ring-1 ring-df-red/25">
               <Zap className="w-4 h-4 text-df-red" />
             </div>
-            <span className="text-base font-semibold text-df-text">
+            <span className="text-base font-semibold text-df-text tracking-tight">
               DayFlow
             </span>
           </div>
@@ -178,7 +180,7 @@ export default function App() {
                 data-ocid={`nav.${label.toLowerCase()}.tab`}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
                   activeNav === label
-                    ? "bg-df-red-dim text-df-red"
+                    ? "bg-df-red/20 text-df-red ring-1 ring-df-red/30"
                     : "text-df-text-muted hover:text-df-text hover:bg-white/[0.04]"
                 }`}
               >
@@ -196,23 +198,23 @@ export default function App() {
         <div className="flex items-center justify-between mb-8">
           {/* Polished date selector pill */}
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1 border border-white/[0.08] bg-white/[0.03] rounded-full px-1.5 py-1 backdrop-blur-sm">
+            <div className="flex items-center gap-1 border border-white/[0.10] bg-white/[0.04] rounded-full px-1.5 py-1 backdrop-blur-sm shadow-card">
               <button
                 type="button"
                 onClick={goToPrevDay}
                 data-ocid="nav.prev_day.button"
                 aria-label="Previous day"
-                className="w-7 h-7 rounded-full flex items-center justify-center text-df-text-muted hover:text-df-text hover:bg-white/[0.10] transition-all duration-150"
+                className="w-7 h-7 rounded-full flex items-center justify-center text-df-text-muted hover:text-df-text hover:bg-df-red/[0.12] transition-all duration-150"
               >
                 <ChevronLeft className="w-3.5 h-3.5" />
               </button>
 
               <div className="flex flex-col items-center min-w-[160px] px-1">
-                <span className="text-sm font-medium text-df-text tracking-tight leading-snug">
+                <span className="text-sm font-semibold text-df-text tracking-tight leading-snug">
                   {dateStr}
                 </span>
                 {isToday && (
-                  <span className="text-[10px] font-semibold text-df-red bg-df-red/10 px-2 py-0.5 rounded-full leading-none mt-1">
+                  <span className="text-[10px] font-semibold text-df-red bg-df-red/15 px-2 py-0.5 rounded-full leading-none mt-1 ring-1 ring-df-red/25">
                     Today
                   </span>
                 )}
@@ -223,7 +225,7 @@ export default function App() {
                 onClick={goToNextDay}
                 data-ocid="nav.next_day.button"
                 aria-label="Next day"
-                className="w-7 h-7 rounded-full flex items-center justify-center text-df-text-muted hover:text-df-text hover:bg-white/[0.10] transition-all duration-150"
+                className="w-7 h-7 rounded-full flex items-center justify-center text-df-text-muted hover:text-df-text hover:bg-df-red/[0.12] transition-all duration-150"
               >
                 <ChevronRight className="w-3.5 h-3.5" />
               </button>
@@ -245,7 +247,7 @@ export default function App() {
           </div>
 
           {/* Live badge */}
-          <div className="flex items-center gap-2 text-xs text-df-text-muted bg-white/[0.03] border border-white/[0.07] rounded-full px-3 py-1.5 whitespace-nowrap">
+          <div className="flex items-center gap-2 text-xs text-df-text-muted bg-white/[0.04] border border-white/[0.08] rounded-full px-3 py-1.5 whitespace-nowrap ring-1 ring-white/[0.05]">
             <span className="relative flex w-1.5 h-1.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-df-green opacity-60" />
               <span className="relative inline-flex rounded-full w-1.5 h-1.5 bg-df-green" />
@@ -263,13 +265,13 @@ export default function App() {
         >
           {/* Red left accent bar */}
           <span
-            className="absolute left-0 top-1 bottom-1 w-[2px] rounded-full"
-            style={{ background: "oklch(0.65 0.22 25 / 0.6)" }}
+            className="absolute left-0 top-1 bottom-1 w-[3px] rounded-full"
+            style={{ background: "oklch(0.62 0.26 22 / 0.7)" }}
           />
           {/* Faint decorative quote mark */}
           <span
             className="absolute -top-4 -left-1 text-[6rem] leading-none font-serif select-none pointer-events-none"
-            style={{ color: "oklch(0.65 0.22 25 / 0.07)" }}
+            style={{ color: "oklch(0.62 0.26 22 / 0.07)" }}
             aria-hidden="true"
           >
             &ldquo;

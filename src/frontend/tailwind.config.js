@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
+        sans: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
       },
       colors: {
         border: "oklch(var(--border))",
@@ -67,23 +67,31 @@ export default {
           border: "oklch(var(--sidebar-border))",
           ring: "oklch(var(--sidebar-ring))",
         },
-        /* DayFlow semantic tokens — red accent theme */
+        /* DayFlow semantic tokens */
         df: {
-          teal: "oklch(0.65 0.22 25)",
-          "teal-dim": "oklch(0.65 0.22 25 / 0.15)",
-          red: "oklch(0.65 0.22 25)",
-          "red-dim": "oklch(0.65 0.22 25 / 0.15)",
-          purple: "oklch(0.47 0.22 275)",
-          "purple-dim": "oklch(0.47 0.22 275 / 0.15)",
+          red: "oklch(0.62 0.26 22)",
+          "red-dim": "oklch(0.62 0.26 22 / 0.15)",
+          gold: "oklch(0.78 0.16 75)",
+          "gold-dim": "oklch(0.78 0.16 75 / 0.15)",
+          emerald: "oklch(0.72 0.18 158)",
+          "emerald-dim": "oklch(0.72 0.18 158 / 0.15)",
+          sky: "oklch(0.72 0.17 225)",
+          "sky-dim": "oklch(0.72 0.17 225 / 0.15)",
+          violet: "oklch(0.62 0.22 280)",
+          "violet-dim": "oklch(0.62 0.22 280 / 0.15)",
+          purple: "oklch(0.62 0.22 280)",
+          "purple-dim": "oklch(0.62 0.22 280 / 0.15)",
           orange: "oklch(0.75 0.18 50)",
           "orange-dim": "oklch(0.75 0.18 50 / 0.15)",
           green: "oklch(0.76 0.17 155)",
           "green-dim": "oklch(0.76 0.17 155 / 0.15)",
-          navy: "oklch(0.12 0.035 240)",
-          "navy-mid": "oklch(0.17 0.045 240)",
-          "navy-light": "oklch(0.22 0.05 240)",
-          text: "oklch(0.95 0.02 240)",
-          "text-muted": "oklch(0.67 0.05 240)",
+          navy: "oklch(0.11 0.04 245)",
+          "navy-mid": "oklch(0.15 0.05 245)",
+          "navy-light": "oklch(0.20 0.05 245)",
+          text: "oklch(0.96 0.01 240)",
+          "text-muted": "oklch(0.60 0.05 240)",
+          teal: "oklch(0.62 0.26 22)",
+          "teal-dim": "oklch(0.62 0.26 22 / 0.15)",
         },
       },
       borderRadius: {
@@ -94,8 +102,8 @@ export default {
         "2xl": "1.5rem",
       },
       boxShadow: {
-        card: "0 4px 24px oklch(0.05 0.01 240 / 0.6), inset 0 1px 0 oklch(1 0 0 / 0.04)",
-        glow: "0 0 24px oklch(0.65 0.22 25 / 0.25)",
+        card: "0 4px 32px oklch(0.05 0.02 240 / 0.7), inset 0 1px 0 oklch(1 0 0 / 0.06)",
+        glow: "0 0 30px oklch(0.62 0.26 22 / 0.35)",
       },
       keyframes: {
         "accordion-down": { from: { height: "0" }, to: { height: "var(--radix-accordion-content-height)" } },

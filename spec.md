@@ -1,40 +1,38 @@
-# DayFlow — Bible Reader Enhancements
+# DayFlow
 
 ## Current State
-`BibleReaderCard.tsx` is a compact dashboard widget card with:
-- A header (Library icon + title + translation name)
-- Book dropdown (Select) + Chapter dropdown (Select) + prev/next chapter buttons
-- A `ScrollArea` of height `h-80` showing verse list
-- Dark navy card background, df-red/teal accents
-- Used both in the dashboard grid (compact) and in the full-screen Bible nav tab
-
-Navigation is functional but visually flat: two plain Select dropdowns side by side with small arrow buttons.
+DayFlow is a dark-themed personal daily dashboard with 5 widgets: Tasks, Journal, Daily Habits, Daily Devotion, and Bible Reader. The app uses an OKLCH-based dark navy color system with red (`oklch(0.65 0.22 25)`) as the primary accent. The current palette is muted/flat — dark navy backgrounds, no gradient depth, no vibrant widget differentiation. Widget cards share a nearly identical look (`bg-df-navy-mid`, same border, same card shadow). The DailyHabitsCard uses a purple accent inline variable (`oklch(0.72 0.18 290)`) inconsistently. No widget has a truly premium, layered visual style.
 
 ## Requested Changes (Diff)
 
 ### Add
-- **Bigger, more immersive layout**: increase the card height and reading area substantially. In the dashboard grid, `min-h-[500px]`. In the full Bible tab view it already fills the page, so make the scroll area taller there too.
-- **Redesigned book navigation**: Replace the plain book Select dropdown with a categorised, two-panel approach:
-  - A **Testament toggle** (Old Testament / New Testament) as two pill/tab buttons at the top
-  - A **scrollable book grid** below the toggle showing all books for the selected testament as small clickable pills/chips (e.g. 3–4 columns). Selected book is highlighted with df-red accent.
-  - This replaces the current book Select dropdown entirely.
-- **Chapter strip**: Replace the chapter Select dropdown with a **horizontal scrollable row of chapter number buttons** (small square/circle chips, highlighted when active). Prev/next arrows remain flanking the strip.
-- **Reference header**: Make the current chapter reference (e.g. "John 3") larger and more prominent — semibold, slightly bigger text, as a section divider between navigation and content.
-- Keep all existing fetch logic, error states, loading spinner, and verse display unchanged.
+- A richer, more vibrant color palette: deepen the red accent to a true vivid crimson (`oklch(0.62 0.26 22)`), add a warm gold accent for Devotion, a deep indigo/violet for Journal, an emerald green for Habits, and a sky blue for Bible Reader
+- Stronger card depth: each widget card gets a unique glass-morphism treatment — subtle gradient backgrounds, glowing border accents, and hover lift/glow effects tuned per widget
+- More vibrant background: replace the flat dark navy with a rich deep background that has subtle radial highlights to add dimensionality
+- Premium typography upgrade: switch UI body text to Plus Jakarta Sans (pre-bundled) for a sharper, more polished professional feel
+- Widget header icon containers get color-matched treatment (not all the same red)
+- The nav bar active state gets a more vivid/elevated treatment
+- Improved card shadows with colored glows per widget
 
 ### Modify
-- Card container: set `min-h-[500px]` (dashboard) and ensure the scroll area for verses grows to fill available space.
-- Header: keep the icon + "Bible Reader" title row but make it slightly more spacious.
+- `index.css`: Update background gradient to be richer. Update CSS custom property values for background, card, border. Add new semantic tokens for widget-specific accent colors
+- `tailwind.config.js`: Update `df.*` color tokens. Add per-widget semantic color tokens: `df.devotion` (gold), `df.journal` (indigo), `df.habits` (emerald), `df.bible` (sky). Update `boxShadow.card` for richer depth. Update `fontFamily.sans` to Plus Jakarta Sans
+- `TasksCard.tsx`: Update card background to use a subtle warm surface with a red glow border treatment. Upgrade the progress bar. Make the card feel premium — slightly elevated surface, richer header.
+- `JournalCard.tsx`: The existing purple gradient background is good but needs to be richer (deeper indigo-to-violet gradient). Update tab styling for more visual punch. Update the body/input styling.
+- `DailyHabitsCard.tsx`: Replace the purple ACCENT inline variable with the new `df.habits` emerald token from Tailwind. Give the card a rich dark emerald-tinted surface
+- `DevotionCard.tsx`: Enhance the amber/gold treatment — richer gradients, stronger border glow, more elegant blockquote styling with a gold left border
+- `BibleReaderCard.tsx`: Give the card a deep sky-blue tinted surface with matching border/glow. Upgrade the navigation to be more premium-looking
+- `App.tsx`: Upgrade the nav bar active pill and header section for a more polished look
 
 ### Remove
-- The old book `<Select>` dropdown component.
-- The old chapter `<Select>` dropdown component.
+- Nothing removed
 
 ## Implementation Plan
-1. Add `selectedTestament` state: `'old' | 'new'`, defaulting to `'new'`.
-2. Split `BIBLE_BOOKS` into `OT_BOOKS` and `NT_BOOKS` arrays.
-3. Build `TestamentToggle` inline: two pill buttons (Old / New), clicking switches testament and resets to the first book of that testament.
-4. Build `BookGrid` inline: scrollable grid of book name chips, 3–4 per row, selected one highlighted with df-red background.
-5. Build `ChapterStrip` inline: `overflow-x-auto flex gap-1` row of small chapter chips (numbers), selected highlighted, flanked by prev/next arrow buttons.
-6. Keep verse fetch logic and rendering untouched.
-7. Run validate after implementation.
+1. Update `tailwind.config.js` — enrich all `df.*` tokens, add per-widget color tokens, update shadows, update font
+2. Update `index.css` — new background gradient, richer CSS variables, font-face for Plus Jakarta Sans, updated utility classes
+3. Update `TasksCard.tsx` — premium card styling with red accent
+4. Update `JournalCard.tsx` — richer indigo/violet gradient, better tabs
+5. Update `DailyHabitsCard.tsx` — replace inline ACCENT with emerald tokens, premium card
+6. Update `DevotionCard.tsx` — enhanced amber/gold card treatment
+7. Update `BibleReaderCard.tsx` — sky-blue tinted premium card
+8. Update `App.tsx` — richer nav, improved header overall visual polish

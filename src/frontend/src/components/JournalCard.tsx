@@ -27,11 +27,11 @@ interface JournalCardProps {
 }
 
 const MOODS = [
-  { key: "grateful", emoji: "🙏", label: "Grateful" },
-  { key: "peaceful", emoji: "😌", label: "Peaceful" },
-  { key: "tired", emoji: "😴", label: "Tired" },
-  { key: "anxious", emoji: "😰", label: "Anxious" },
-  { key: "joyful", emoji: "😊", label: "Joyful" },
+  { key: "grateful", emoji: "\uD83D\uDE4F", label: "Grateful" },
+  { key: "peaceful", emoji: "\uD83D\uDE0C", label: "Peaceful" },
+  { key: "tired", emoji: "\uD83D\uDE34", label: "Tired" },
+  { key: "anxious", emoji: "\uD83D\uDE30", label: "Anxious" },
+  { key: "joyful", emoji: "\uD83D\uDE0A", label: "Joyful" },
 ];
 
 function loadData(dateStr: string): JournalData {
@@ -89,7 +89,7 @@ function useDateData(dateKey: string) {
 function Dot() {
   return (
     <span
-      className="inline-block w-1.5 h-1.5 rounded-full bg-df-red ml-1 mb-0.5"
+      className="inline-block w-1.5 h-1.5 rounded-full bg-df-violet ml-1 mb-0.5"
       aria-hidden="true"
     />
   );
@@ -162,7 +162,7 @@ function ThoughtsTab({
         onClick={handleSave}
         disabled={saving}
         data-ocid="journal.save_button"
-        className="bg-df-red text-white font-semibold hover:bg-df-red/90 h-9 text-sm"
+        className="bg-df-violet text-white font-semibold hover:bg-df-violet/90 h-9 text-sm"
       >
         {saving ? (
           <>
@@ -229,7 +229,7 @@ function BulletListTab({
           onClick={add}
           size="icon"
           data-ocid={addOcid}
-          className="bg-df-red/20 hover:bg-df-red/40 text-white border border-df-red/30 h-9 w-9 shrink-0"
+          className="bg-df-violet/20 hover:bg-df-violet/40 text-white border border-df-violet/30 h-9 w-9 shrink-0"
         >
           <Plus className="w-4 h-4" />
         </Button>
@@ -251,7 +251,6 @@ function BulletListTab({
           )}
           {items.map((item, idx) => (
             <motion.div
-              // items are user-typed strings; use content+position as stable key
               key={`item-${idx}-${item.slice(0, 20)}`}
               initial={{ opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
@@ -260,7 +259,9 @@ function BulletListTab({
               className="flex items-start gap-2 bg-white/[0.07] rounded-lg px-3 py-2 group"
               data-ocid={`${itemOcid}.${idx + 1}`}
             >
-              <span className="text-df-red mt-0.5 text-xs select-none">•</span>
+              <span className="text-df-violet mt-0.5 text-xs select-none">
+                •
+              </span>
               <span className="flex-1 text-white/90 text-sm leading-snug break-words">
                 {item}
               </span>
@@ -324,7 +325,7 @@ function GoalsTab({
           onClick={add}
           size="icon"
           data-ocid="journal.goals.add_button"
-          className="bg-df-red/20 hover:bg-df-red/40 text-white border border-df-red/30 h-9 w-9 shrink-0"
+          className="bg-df-violet/20 hover:bg-df-violet/40 text-white border border-df-violet/30 h-9 w-9 shrink-0"
         >
           <Plus className="w-4 h-4" />
         </Button>
@@ -362,9 +363,11 @@ function GoalsTab({
                 aria-pressed={goal.done}
                 className="shrink-0 w-4 h-4 rounded border flex items-center justify-center transition-all"
                 style={{
-                  background: goal.done ? "oklch(0.65 0.22 25)" : "transparent",
+                  background: goal.done
+                    ? "oklch(0.62 0.22 280)"
+                    : "transparent",
                   borderColor: goal.done
-                    ? "oklch(0.65 0.22 25)"
+                    ? "oklch(0.62 0.22 280)"
                     : "oklch(1 0 0 / 0.3)",
                 }}
               >
@@ -433,7 +436,7 @@ function MoodTab({
               data-ocid={`journal.mood.${m.key}.toggle`}
               className={`flex flex-col items-center gap-1.5 rounded-xl py-3 px-1 border transition-all ${
                 active
-                  ? "bg-df-red/20 border-df-red shadow-[0_0_12px_oklch(0.65_0.22_25/0.3)]"
+                  ? "bg-df-violet/20 border-df-violet shadow-[0_0_12px_oklch(0.62_0.22_280/0.3)]"
                   : "bg-white/[0.06] border-white/10 hover:bg-white/[0.12]"
               }`}
               aria-label={m.label}
@@ -442,7 +445,7 @@ function MoodTab({
               <span className="text-2xl leading-none">{m.emoji}</span>
               <span
                 className={`text-[10px] font-medium leading-none ${
-                  active ? "text-df-red" : "text-white/50"
+                  active ? "text-df-violet" : "text-white/50"
                 }`}
               >
                 {m.label}
@@ -459,7 +462,7 @@ function MoodTab({
           className="text-white/50 text-xs text-center"
         >
           Mood recorded{" "}
-          <span className="text-df-red font-medium">
+          <span className="text-df-violet font-medium">
             {MOODS.find((m) => m.key === mood)?.label}
           </span>
         </motion.p>
@@ -491,20 +494,20 @@ export default function JournalCard({ dateKey }: JournalCardProps) {
 
   return (
     <div
-      className="rounded-2xl border border-white/[0.08] shadow-card card-glow flex flex-col min-h-[380px] p-5 relative overflow-hidden"
+      className="rounded-2xl border border-df-violet/25 shadow-card card-violet-glow flex flex-col min-h-[380px] p-5 relative overflow-hidden"
       style={{
         background:
-          "linear-gradient(135deg, oklch(0.32 0.14 275) 0%, oklch(0.40 0.18 275) 100%)",
+          "linear-gradient(145deg, oklch(0.20 0.10 280) 0%, oklch(0.25 0.13 275) 50%, oklch(0.22 0.12 265) 100%)",
       }}
     >
       {/* Decorative glow blobs */}
-      <div className="absolute -top-12 -right-12 w-36 h-36 rounded-full bg-df-purple/30 blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-8 -left-8 w-28 h-28 rounded-full bg-df-red/20 blur-2xl pointer-events-none" />
+      <div className="absolute -top-12 -right-12 w-36 h-36 rounded-full bg-df-violet/25 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-8 -left-8 w-28 h-28 rounded-full bg-df-violet/15 blur-2xl pointer-events-none" />
 
       {/* Header */}
       <div className="flex items-center gap-2 mb-1 relative z-10">
-        <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">
-          <BookOpen className="w-4 h-4 text-white" />
+        <div className="w-8 h-8 rounded-xl bg-df-violet-dim flex items-center justify-center ring-1 ring-df-violet/30">
+          <BookOpen className="w-4 h-4 text-df-violet" />
         </div>
         <h3 className="text-sm font-semibold text-white">Daily Journal</h3>
       </div>
@@ -524,7 +527,7 @@ export default function JournalCard({ dateKey }: JournalCardProps) {
               key={tab.value}
               value={tab.value}
               data-ocid={`journal.${tab.value}.tab`}
-              className="flex-1 text-[10px] font-medium py-1.5 px-1 rounded-lg text-white/50 data-[state=active]:bg-df-red data-[state=active]:text-white data-[state=active]:shadow-sm transition-all leading-none"
+              className="flex-1 text-[10px] font-medium py-1.5 px-1 rounded-lg text-white/50 data-[state=active]:bg-df-violet data-[state=active]:text-white data-[state=active]:shadow-sm transition-all leading-none"
             >
               {tab.label}
               {tab.filled && <Dot />}

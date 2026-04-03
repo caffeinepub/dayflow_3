@@ -116,10 +116,13 @@ export default function TasksCard({ dateKey }: TasksCardProps) {
   const pct = tasks.length ? Math.round((doneCount / tasks.length) * 100) : 0;
 
   return (
-    <div className="rounded-2xl border border-white/[0.06] bg-df-navy-mid shadow-card card-glow flex flex-col h-full min-h-[340px] p-5">
+    <div className="rounded-2xl border border-df-red/20 bg-gradient-to-br from-df-navy-mid to-[oklch(0.18_0.06_20)] shadow-card card-glow flex flex-col h-full min-h-[340px] p-5 relative overflow-hidden">
+      {/* Glow blob */}
+      <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-df-red/10 blur-3xl pointer-events-none" />
+
       {/* Header */}
-      <div className="flex items-center gap-2 mb-4">
-        <div className="w-8 h-8 rounded-xl bg-df-red-dim flex items-center justify-center">
+      <div className="flex items-center gap-2 mb-4 relative">
+        <div className="w-8 h-8 rounded-xl bg-df-red-dim flex items-center justify-center ring-1 ring-df-red/30">
           <CheckSquare className="w-4 h-4 text-df-red" />
         </div>
         <h3 className="text-sm font-semibold text-df-text">My Day Tasks</h3>
@@ -128,7 +131,7 @@ export default function TasksCard({ dateKey }: TasksCardProps) {
           <button
             type="button"
             onClick={exitEditMode}
-            className="ml-auto text-xs font-semibold text-df-red hover:text-df-red/80 transition-colors px-2.5 py-1 rounded-lg bg-df-red-dim"
+            className="ml-auto text-xs font-semibold text-df-red hover:text-df-red/80 transition-colors px-2.5 py-1 rounded-lg bg-df-red-dim ring-1 ring-df-red/20"
             data-ocid="tasks.done_button"
           >
             Done
@@ -153,7 +156,7 @@ export default function TasksCard({ dateKey }: TasksCardProps) {
 
       {/* Progress bar */}
       {!editMode && (
-        <div className="h-1 rounded-full bg-df-navy-light mb-4 overflow-hidden">
+        <div className="h-1.5 rounded-full bg-df-navy-light mb-4 overflow-hidden">
           <motion.div
             className="h-full rounded-full bg-df-red"
             initial={{ width: 0 }}
@@ -318,7 +321,7 @@ export default function TasksCard({ dateKey }: TasksCardProps) {
                       <title>Checked</title>
                       <path
                         d="M2 6l3 3 5-5"
-                        stroke="oklch(0.95 0.02 240)"
+                        stroke="oklch(0.96 0.01 240)"
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"

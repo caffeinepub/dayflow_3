@@ -28,9 +28,9 @@ const DEFAULT_ITEMS = [
 const ITEMS_KEY = "dayflow_habits_items";
 const DONE_KEY = (dateKey: string) => `dayflow_habits_done_${dateKey}`;
 
-const ACCENT = "oklch(0.72 0.18 290)";
-const ACCENT_BG = "oklch(0.72 0.18 290 / 0.15)";
-const ACCENT_BANNER = "oklch(0.72 0.18 290 / 0.12)";
+const EMERALD = "oklch(0.72 0.18 158)";
+const EMERALD_DIM = "oklch(0.72 0.18 158 / 0.15)";
+const EMERALD_BANNER = "oklch(0.72 0.18 158 / 0.12)";
 
 type EditEntry = { id: number; value: string };
 
@@ -167,14 +167,20 @@ export default function DailyHabitsCard() {
   const pct = items.length ? Math.round((doneCount / items.length) * 100) : 0;
 
   return (
-    <div className="rounded-2xl border border-white/[0.06] bg-df-navy-mid shadow-card card-glow flex flex-col h-full min-h-[340px] p-5">
+    <div className="rounded-2xl border border-[oklch(0.72_0.18_158/0.25)] bg-gradient-to-br from-df-navy-mid to-[oklch(0.16_0.06_158)] shadow-card card-emerald-glow flex flex-col h-full min-h-[340px] p-5 relative overflow-hidden">
+      {/* Glow blob */}
+      <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-[oklch(0.72_0.18_158/0.08)] blur-3xl pointer-events-none" />
+
       {/* Header */}
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center gap-2 mb-4 relative">
         <div
           className="w-8 h-8 rounded-xl flex items-center justify-center"
-          style={{ background: ACCENT_BG }}
+          style={{
+            background: EMERALD_DIM,
+            boxShadow: "0 0 0 1px oklch(0.72 0.18 158 / 0.3)",
+          }}
         >
-          <Star className="w-4 h-4" style={{ color: ACCENT }} />
+          <Star className="w-4 h-4" style={{ color: EMERALD }} />
         </div>
         <h3 className="text-sm font-semibold text-df-text">Daily Habits</h3>
         {!isEditing && (
@@ -189,12 +195,10 @@ export default function DailyHabitsCard() {
           data-ocid={isEditing ? "habits.save_button" : "habits.edit_button"}
           className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium transition-all duration-150"
           style={{
-            background: isEditing
-              ? "oklch(0.72 0.18 290 / 0.18)"
-              : "oklch(1 0 0 / 0.04)",
-            color: isEditing ? ACCENT : "oklch(0.67 0.05 240)",
+            background: isEditing ? EMERALD_DIM : "oklch(1 0 0 / 0.04)",
+            color: isEditing ? EMERALD : "oklch(0.67 0.05 240)",
             border: isEditing
-              ? "1px solid oklch(0.72 0.18 290 / 0.3)"
+              ? "1px solid oklch(0.72 0.18 158 / 0.3)"
               : "1px solid oklch(1 0 0 / 0.06)",
           }}
           aria-label={isEditing ? "Save edits" : "Edit habits"}
@@ -218,7 +222,7 @@ export default function DailyHabitsCard() {
         <div className="h-1.5 rounded-full bg-df-navy-light mb-4 overflow-hidden">
           <motion.div
             className="h-full rounded-full"
-            style={{ background: ACCENT }}
+            style={{ background: EMERALD }}
             initial={{ width: 0 }}
             animate={{ width: `${pct}%` }}
             transition={{ duration: 0.4 }}
@@ -235,8 +239,8 @@ export default function DailyHabitsCard() {
             exit={{ opacity: 0, scale: 0.95 }}
             className="mb-3 text-center text-xs font-medium rounded-lg py-1.5 px-3"
             style={{
-              background: ACCENT_BANNER,
-              color: ACCENT,
+              background: EMERALD_BANNER,
+              color: EMERALD,
             }}
           >
             ✨ All done! Keep shining today.
@@ -291,8 +295,8 @@ export default function DailyHabitsCard() {
                   data-ocid={`habits.checkbox.${i + 1}`}
                   className="w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-all duration-200"
                   style={{
-                    backgroundColor: done[item] ? ACCENT : "transparent",
-                    borderColor: done[item] ? ACCENT : "rgba(255,255,255,0.2)",
+                    backgroundColor: done[item] ? EMERALD : "transparent",
+                    borderColor: done[item] ? EMERALD : "rgba(255,255,255,0.2)",
                   }}
                   aria-label={`Toggle ${item}`}
                 >
@@ -405,8 +409,8 @@ export default function DailyHabitsCard() {
           data-ocid="habits.add_button"
           className="h-9 w-9 rounded-lg flex items-center justify-center transition-colors flex-shrink-0"
           style={{
-            background: "oklch(0.72 0.18 290 / 0.18)",
-            color: ACCENT,
+            background: EMERALD_DIM,
+            color: EMERALD,
           }}
           aria-label="Add habit"
         >

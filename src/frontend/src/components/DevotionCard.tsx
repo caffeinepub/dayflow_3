@@ -2889,19 +2889,19 @@ export default function DevotionCard({ dayOfYear }: DevotionCardProps) {
   const canGoNext = displayedDay < 365;
 
   return (
-    <div className="rounded-2xl border border-amber-500/20 bg-df-navy-mid shadow-card flex flex-col h-full min-h-[340px] p-5 relative overflow-hidden">
-      {/* Warm glow background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-amber-500/[0.04] to-transparent pointer-events-none" />
+    <div className="rounded-2xl border border-df-gold/20 bg-gradient-to-br from-df-navy-mid to-[oklch(0.16_0.06_75)] shadow-card card-gold-glow flex flex-col h-full min-h-[340px] p-5 relative overflow-hidden">
+      {/* Gold glow blob */}
+      <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-df-gold/[0.08] blur-3xl pointer-events-none" />
 
       {/* Header */}
       <div className="flex items-center gap-2 mb-4 relative">
-        <div className="w-8 h-8 rounded-xl bg-amber-500/15 flex items-center justify-center flex-shrink-0">
-          <BookMarked className="w-4 h-4 text-amber-400" />
+        <div className="w-8 h-8 rounded-xl bg-df-gold-dim flex items-center justify-center flex-shrink-0 ring-1 ring-df-gold/30">
+          <BookMarked className="w-4 h-4 text-df-gold" />
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="text-sm font-semibold text-df-text">Daily Devotion</h3>
           <div className="flex items-center gap-1.5">
-            <p className="text-[10px] text-amber-400/70">
+            <p className="text-[10px] text-df-gold/70">
               {offset === 0
                 ? `Today · Day ${displayedDay} of 365`
                 : `Day ${displayedDay} of 365`}
@@ -2910,7 +2910,7 @@ export default function DevotionCard({ dayOfYear }: DevotionCardProps) {
               <button
                 type="button"
                 onClick={() => setOffset(0)}
-                className="text-[10px] text-amber-400 hover:text-amber-300 font-medium transition-colors"
+                className="text-[10px] text-df-gold hover:text-df-gold/70 font-medium transition-colors"
                 data-ocid="devotion.toggle"
               >
                 · Back to Today
@@ -2955,13 +2955,13 @@ export default function DevotionCard({ dayOfYear }: DevotionCardProps) {
       >
         {/* Reference badge */}
         <div className="inline-flex">
-          <span className="text-[11px] font-semibold bg-amber-500/15 text-amber-300 rounded-full px-3 py-1 border border-amber-500/20">
+          <span className="text-[11px] font-semibold bg-df-gold-dim text-df-gold rounded-full px-3 py-1 border border-df-gold/20">
             {devotion.reference}
           </span>
         </div>
 
         {/* Verse text */}
-        <blockquote className="border-l-2 border-amber-500/40 pl-3">
+        <blockquote className="border-l-2 border-df-gold/40 pl-3">
           <p className="text-sm leading-relaxed text-df-text/90 italic">
             {devotion.verse}
           </p>
@@ -2969,14 +2969,14 @@ export default function DevotionCard({ dayOfYear }: DevotionCardProps) {
 
         {/* Divider */}
         <div className="flex items-center gap-2">
-          <div className="flex-1 h-px bg-amber-500/10" />
-          <span className="text-amber-500/40 text-xs">✦</span>
-          <div className="flex-1 h-px bg-amber-500/10" />
+          <div className="flex-1 h-px bg-df-gold/10" />
+          <span className="text-df-gold/40 text-xs">✦</span>
+          <div className="flex-1 h-px bg-df-gold/10" />
         </div>
 
         {/* Reflection */}
-        <div className="bg-amber-500/[0.06] rounded-xl p-3 border border-amber-500/10">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-amber-400/70 mb-1.5">
+        <div className="bg-df-gold/[0.06] rounded-xl p-3 border border-df-gold/10">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-df-gold/70 mb-1.5">
             Reflection
           </p>
           <p className="text-xs text-df-text-muted leading-relaxed">
