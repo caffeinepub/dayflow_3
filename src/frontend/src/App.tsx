@@ -13,7 +13,7 @@ import {
   Zap,
 } from "lucide-react";
 import { motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import BibleReaderCard from "./components/BibleReaderCard";
 import DailyHabitsCard from "./components/DailyHabitsCard";
 import DevotionCard from "./components/DevotionCard";
@@ -91,15 +91,15 @@ function BirthdayAlertBanner() {
     <motion.div
       initial={{ opacity: 0, y: -8 }}
       animate={{ opacity: 1, y: 0 }}
-      className="mx-6 mb-4 rounded-xl border border-pink-500/25 bg-pink-500/[0.08] px-4 py-2.5 flex items-center gap-2"
+      className="mx-6 mb-4 rounded-xl border border-pink-200 bg-pink-50 px-4 py-2.5 flex items-center gap-2"
       data-ocid="birthdays.toast"
     >
-      <Cake className="w-4 h-4 text-pink-400 flex-shrink-0" />
-      <p className="text-sm text-pink-200">
+      <Cake className="w-4 h-4 text-pink-500 flex-shrink-0" />
+      <p className="text-sm text-pink-700">
         <span className="font-semibold">\uD83C\uDF82 Upcoming: </span>
         {label}
         {soonContacts.length > 1 && (
-          <span className="text-pink-300/70">
+          <span className="text-pink-500">
             {" "}
             +{soonContacts.length - 1} more
           </span>
@@ -118,10 +118,6 @@ function getDayOfYear(date: Date): number {
 export default function App() {
   const [activeNav, setActiveNav] = useState("Dashboard");
   const [selectedDate, setSelectedDate] = useState<Date>(() => new Date());
-
-  useEffect(() => {
-    document.documentElement.classList.add("dark");
-  }, []);
 
   const dateKey = selectedDate.toISOString().slice(0, 10);
   const dayOfYear = getDayOfYear(selectedDate);
@@ -157,13 +153,13 @@ export default function App() {
       <Toaster position="top-right" />
 
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[oklch(0.11_0.04_245/0.97)] backdrop-blur-md">
+      <header className="sticky top-0 z-40 border-b border-gray-200 bg-white/95 backdrop-blur-md shadow-sm">
         <div className="max-w-[1200px] mx-auto px-6 h-14 flex items-center gap-6">
           <div className="flex items-center gap-2 min-w-fit">
             <div className="w-7 h-7 rounded-lg bg-df-red-dim flex items-center justify-center ring-1 ring-df-red/25">
               <Zap className="w-4 h-4 text-df-red" />
             </div>
-            <span className="text-base font-semibold text-df-text tracking-tight">
+            <span className="text-base font-semibold text-gray-900 tracking-tight">
               DayFlow
             </span>
           </div>
@@ -180,8 +176,8 @@ export default function App() {
                 data-ocid={`nav.${label.toLowerCase()}.tab`}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
                   activeNav === label
-                    ? "bg-df-red/20 text-df-red ring-1 ring-df-red/30"
-                    : "text-df-text-muted hover:text-df-text hover:bg-white/[0.04]"
+                    ? "bg-df-red/10 text-df-red ring-1 ring-df-red/20"
+                    : "text-gray-500 hover:text-gray-800 hover:bg-gray-100"
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -198,23 +194,23 @@ export default function App() {
         <div className="flex items-center justify-between mb-8">
           {/* Polished date selector pill */}
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1 border border-white/[0.10] bg-white/[0.04] rounded-full px-1.5 py-1 backdrop-blur-sm shadow-card">
+            <div className="flex items-center gap-1 border border-gray-200 bg-white rounded-full px-1.5 py-1 shadow-sm">
               <button
                 type="button"
                 onClick={goToPrevDay}
                 data-ocid="nav.prev_day.button"
                 aria-label="Previous day"
-                className="w-7 h-7 rounded-full flex items-center justify-center text-df-text-muted hover:text-df-text hover:bg-df-red/[0.12] transition-all duration-150"
+                className="w-7 h-7 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-df-red/[0.08] transition-all duration-150"
               >
                 <ChevronLeft className="w-3.5 h-3.5" />
               </button>
 
               <div className="flex flex-col items-center min-w-[160px] px-1">
-                <span className="text-sm font-semibold text-df-text tracking-tight leading-snug">
+                <span className="text-sm font-semibold text-gray-900 tracking-tight leading-snug">
                   {dateStr}
                 </span>
                 {isToday && (
-                  <span className="text-[10px] font-semibold text-df-red bg-df-red/15 px-2 py-0.5 rounded-full leading-none mt-1 ring-1 ring-df-red/25">
+                  <span className="text-[10px] font-semibold text-df-red bg-df-red/10 px-2 py-0.5 rounded-full leading-none mt-1 ring-1 ring-df-red/20">
                     Today
                   </span>
                 )}
@@ -225,7 +221,7 @@ export default function App() {
                 onClick={goToNextDay}
                 data-ocid="nav.next_day.button"
                 aria-label="Next day"
-                className="w-7 h-7 rounded-full flex items-center justify-center text-df-text-muted hover:text-df-text hover:bg-df-red/[0.12] transition-all duration-150"
+                className="w-7 h-7 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-df-red/[0.08] transition-all duration-150"
               >
                 <ChevronRight className="w-3.5 h-3.5" />
               </button>
@@ -247,7 +243,7 @@ export default function App() {
           </div>
 
           {/* Live badge */}
-          <div className="flex items-center gap-2 text-xs text-df-text-muted bg-white/[0.04] border border-white/[0.08] rounded-full px-3 py-1.5 whitespace-nowrap ring-1 ring-white/[0.05]">
+          <div className="flex items-center gap-2 text-xs text-gray-400 bg-gray-50 border border-gray-200 rounded-full px-3 py-1.5 whitespace-nowrap">
             <span className="relative flex w-1.5 h-1.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-df-green opacity-60" />
               <span className="relative inline-flex rounded-full w-1.5 h-1.5 bg-df-green" />
@@ -263,21 +259,21 @@ export default function App() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="relative pl-5"
         >
-          {/* Red left accent bar */}
+          {/* Blue left accent bar */}
           <span
             className="absolute left-0 top-1 bottom-1 w-[3px] rounded-full"
-            style={{ background: "oklch(0.62 0.26 22 / 0.7)" }}
+            style={{ background: "oklch(0.55 0.22 250 / 0.7)" }}
           />
           {/* Faint decorative quote mark */}
           <span
             className="absolute -top-4 -left-1 text-[6rem] leading-none font-serif select-none pointer-events-none"
-            style={{ color: "oklch(0.62 0.26 22 / 0.07)" }}
+            style={{ color: "oklch(0.55 0.22 250 / 0.06)" }}
             aria-hidden="true"
           >
             &ldquo;
           </span>
           <h2
-            className="text-3xl sm:text-4xl font-light text-df-text leading-snug tracking-tight max-w-3xl relative"
+            className="text-3xl sm:text-4xl font-light text-gray-800 leading-snug tracking-tight max-w-3xl relative"
             style={{
               fontFamily: "'Playfair Display', 'Georgia', serif",
               fontStyle: "italic",
@@ -342,15 +338,13 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/[0.06] py-5">
+      <footer className="border-t border-gray-200 py-5">
         <div className="max-w-[1200px] mx-auto px-6 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Zap className="w-3.5 h-3.5 text-df-red" />
-            <span className="text-xs text-df-text-muted font-medium">
-              DayFlow
-            </span>
+            <span className="text-xs text-gray-400 font-medium">DayFlow</span>
           </div>
-          <p className="text-xs text-df-text-muted">
+          <p className="text-xs text-gray-400">
             &copy; {new Date().getFullYear()}. Built with \u2665 using{" "}
             <a
               href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}

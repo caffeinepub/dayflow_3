@@ -1,6 +1,13 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ChevronLeft, ChevronRight, Library, Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Library,
+  Loader2,
+  Search,
+  X,
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 const OLD_TESTAMENT: { name: string; chapters: number }[] = [
   { name: "Genesis", chapters: 50 },
@@ -76,6 +83,11 @@ const NEW_TESTAMENT: { name: string; chapters: number }[] = [
 
 const BIBLE_BOOKS = [...OLD_TESTAMENT, ...NEW_TESTAMENT];
 
+const SKY = "oklch(0.55 0.17 225)";
+const SKY_LIGHT = "oklch(0.62 0.17 225)";
+const SKY_DIM = "oklch(0.72 0.17 225 / 0.10)";
+const SKY_BORDER = "oklch(0.72 0.17 225 / 0.20)";
+
 interface BibleVerse {
   book_id: string;
   book_name: string;
@@ -90,6 +102,11 @@ interface BibleApiResponse {
   translation_name: string;
 }
 
+interface BibleSearchResponse {
+  verses: BibleVerse[];
+  total_results?: number;
+}
+
 export default function BibleReaderCard() {
   const [selectedBook, setSelectedBook] = useState("John");
   const [selectedChapter, setSelectedChapter] = useState(3);
@@ -98,6 +115,16 @@ export default function BibleReaderCard() {
   const [translationName, setTranslationName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Search state
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<BibleVerse[] | null>(null);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
+  const [highlightedVerse, setHighlightedVerse] = useState<number | null>(null);
+
+  const highlightedVerseRef = useRef<HTMLDivElement | null>(null);
+  const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const currentBook = BIBLE_BOOKS.find((b) => b.name === selectedBook);
   const maxChapters = currentBook?.chapters ?? 1;
@@ -133,6 +160,7 @@ export default function BibleReaderCard() {
     }
   };
 
+  // Fetch chapter verses
   useEffect(() => {
     let cancelled = false;
     const fetchVerses = async () => {
@@ -162,6 +190,78 @@ export default function BibleReaderCard() {
     };
   }, [selectedBook, selectedChapter]);
 
+  // Scroll to highlighted verse
+  useEffect(() => {
+    if (highlightedVerse !== null && highlightedVerseRef.current) {
+      highlightedVerseRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      const timer = setTimeout(() => setHighlightedVerse(null), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [highlightedVerse]);
+
+  // Debounced search
+  useEffect(() => {
+    if (searchDebounceRef.current) {
+      clearTimeout(searchDebounceRef.current);
+    }
+
+    const trimmed = searchQuery.trim();
+    if (!trimmed) {
+      setSearchResults(null);
+      setSearchError(null);
+      setSearchLoading(false);
+      return;
+    }
+
+    setSearchLoading(true);
+    setSearchError(null);
+
+    searchDebounceRef.current = setTimeout(async () => {
+      try {
+        const url = `https://bible-api.com/search?q=${encodeURIComponent(trimmed)}&translation=kjv`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data: BibleSearchResponse = await res.json();
+        const results = (data.verses ?? []).slice(0, 20);
+        setSearchResults(results);
+        if (results.length === 0) {
+          setSearchError(null);
+        }
+      } catch {
+        setSearchResults([]);
+        setSearchError("Search failed. Please try again.");
+      } finally {
+        setSearchLoading(false);
+      }
+    }, 400);
+
+    return () => {
+      if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+    };
+  }, [searchQuery]);
+
+  const handleSearchResultClick = (result: BibleVerse) => {
+    setSelectedBook(result.book_name);
+    setSelectedChapter(result.chapter);
+    setHighlightedVerse(result.verse);
+    setSearchQuery("");
+    setSearchResults(null);
+    setSearchError(null);
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    setSearchResults(null);
+    setSearchError(null);
+    setSearchLoading(false);
+  };
+
+  const showSearchPanel =
+    searchLoading || searchError !== null || searchResults !== null;
+
   const isFirstChapterOfFirst =
     selectedBook === BIBLE_BOOKS[0].name && selectedChapter === 1;
   const isLastChapterOfLast =
@@ -170,27 +270,132 @@ export default function BibleReaderCard() {
 
   return (
     <div
-      className="bg-gradient-to-br from-df-navy-mid to-[oklch(0.16_0.06_225)] border border-df-sky/20 rounded-2xl p-5 flex flex-col gap-4 shadow-card card-sky-glow min-h-[600px] relative overflow-hidden"
+      className="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col gap-4 shadow-sm card-sky-glow min-h-[600px] relative overflow-hidden"
+      style={{ borderTopWidth: "2px", borderTopColor: SKY_BORDER }}
       data-ocid="bible.card"
     >
-      {/* Sky glow blob */}
-      <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-df-sky/[0.08] blur-3xl pointer-events-none" />
-
       {/* Header */}
       <div className="flex items-center gap-2.5">
-        <div className="w-8 h-8 rounded-xl bg-df-sky-dim flex items-center justify-center flex-shrink-0 ring-1 ring-df-sky/30">
-          <Library className="w-4 h-4 text-df-sky" />
+        <div
+          className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+          style={{
+            backgroundColor: SKY_DIM,
+            boxShadow: `0 0 0 1px ${SKY_BORDER}`,
+          }}
+        >
+          <Library className="w-4 h-4" style={{ color: SKY_LIGHT }} />
         </div>
         <div className="flex-1 min-w-0">
-          <h2 className="text-sm font-semibold text-df-text leading-tight">
+          <h2 className="text-sm font-semibold text-gray-900 leading-tight">
             Bible Reader
           </h2>
           {translationName && (
-            <p className="text-[10px] text-df-text-muted uppercase tracking-wider leading-tight mt-0.5">
+            <p
+              className="text-[10px] uppercase tracking-wider leading-tight mt-0.5"
+              style={{ color: "oklch(0.55 0.02 60)" }}
+            >
               {translationName}
             </p>
           )}
         </div>
+      </div>
+
+      {/* Search bar */}
+      <div className="relative">
+        <div
+          className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 focus-within:ring-1 transition-all"
+          style={{ "--tw-ring-color": SKY_BORDER } as React.CSSProperties}
+        >
+          {searchLoading ? (
+            <Loader2
+              className="w-4 h-4 flex-shrink-0 animate-spin"
+              style={{ color: SKY_LIGHT }}
+            />
+          ) : (
+            <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
+          )}
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search verses..."
+            className="flex-1 bg-transparent text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none"
+            data-ocid="bible.search_input"
+            aria-label="Search verses by keyword"
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={handleClearSearch}
+              className="w-5 h-5 flex items-center justify-center rounded-md text-gray-400 hover:text-gray-700 transition-colors flex-shrink-0"
+              aria-label="Clear search"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+
+        {/* Search results panel */}
+        {showSearchPanel && (
+          <div
+            className="mt-1 bg-white border border-gray-200 rounded-xl p-2 max-h-60 overflow-y-auto z-10 relative shadow-md"
+            data-ocid="bible.search_results"
+          >
+            {searchLoading && (
+              <div className="flex items-center justify-center py-6">
+                <Loader2
+                  className="w-5 h-5 animate-spin"
+                  style={{ color: SKY_LIGHT }}
+                />
+              </div>
+            )}
+
+            {!searchLoading && searchError && (
+              <p className="text-gray-400 text-xs text-center py-4 px-3">
+                {searchError}
+              </p>
+            )}
+
+            {!searchLoading &&
+              !searchError &&
+              searchResults !== null &&
+              searchResults.length === 0 && (
+                <p className="text-gray-400 text-xs text-center py-4 px-3">
+                  No results found. Try a different keyword.
+                </p>
+              )}
+
+            {!searchLoading &&
+              !searchError &&
+              searchResults &&
+              searchResults.length > 0 && (
+                <ul className="space-y-0.5">
+                  {searchResults.map((result, idx) => (
+                    <li
+                      key={`${result.book_name}-${result.chapter}-${result.verse}-${idx}`}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => handleSearchResultClick(result)}
+                        className="w-full text-left rounded-lg px-3 py-2 cursor-pointer transition-colors group hover:bg-gray-50"
+                        data-ocid="bible.search_result_item"
+                      >
+                        <span
+                          className="block text-xs font-bold leading-tight mb-0.5"
+                          style={{ color: SKY }}
+                        >
+                          {result.book_name} {result.chapter}:{result.verse}
+                        </span>
+                        <span className="block text-xs text-gray-500 leading-relaxed line-clamp-2">
+                          {result.text.trim()}
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+          </div>
+        )}
       </div>
 
       {/* Navigation row: book dropdown + chapter prev/next */}
@@ -198,7 +403,7 @@ export default function BibleReaderCard() {
         <select
           value={selectedBook}
           onChange={(e) => handleBookChange(e.target.value)}
-          className="flex-1 bg-df-navy border border-white/[0.08] text-df-text text-sm font-medium rounded-xl px-3 py-2 focus:outline-none focus:ring-1 focus:ring-df-sky cursor-pointer"
+          className="flex-1 bg-gray-50 border border-gray-200 text-gray-800 text-sm font-medium rounded-xl px-3 py-2 focus:outline-none cursor-pointer"
           aria-label="Select book"
         >
           <optgroup label="Old Testament">
@@ -220,7 +425,7 @@ export default function BibleReaderCard() {
         <select
           value={selectedChapter}
           onChange={(e) => setSelectedChapter(Number(e.target.value))}
-          className="w-20 bg-df-navy border border-white/[0.08] text-df-text text-sm font-medium rounded-xl px-3 py-2 focus:outline-none focus:ring-1 focus:ring-df-sky cursor-pointer"
+          className="w-20 bg-gray-50 border border-gray-200 text-gray-800 text-sm font-medium rounded-xl px-3 py-2 focus:outline-none cursor-pointer"
           aria-label="Select chapter"
         >
           {Array.from({ length: maxChapters }, (_, i) => i + 1).map((ch) => (
@@ -234,7 +439,7 @@ export default function BibleReaderCard() {
           type="button"
           onClick={handlePrevChapter}
           disabled={isFirstChapterOfFirst}
-          className="w-9 h-9 flex items-center justify-center rounded-xl text-df-text-muted hover:text-df-text hover:bg-df-sky/[0.08] disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex-shrink-0"
+          className="w-9 h-9 flex items-center justify-center rounded-xl text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex-shrink-0"
           data-ocid="bible.pagination_prev"
           aria-label="Previous chapter"
         >
@@ -245,7 +450,7 @@ export default function BibleReaderCard() {
           type="button"
           onClick={handleNextChapter}
           disabled={isLastChapterOfLast}
-          className="w-9 h-9 flex items-center justify-center rounded-xl text-df-text-muted hover:text-df-text hover:bg-df-sky/[0.08] disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex-shrink-0"
+          className="w-9 h-9 flex items-center justify-center rounded-xl text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex-shrink-0"
           data-ocid="bible.pagination_next"
           aria-label="Next chapter"
         >
@@ -256,19 +461,25 @@ export default function BibleReaderCard() {
       {/* Reference label */}
       {reference && !loading && (
         <div className="flex items-center gap-2 -mb-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-df-sky flex-shrink-0" />
-          <p className="text-base font-semibold text-df-text">{reference}</p>
+          <span
+            className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+            style={{ backgroundColor: SKY_LIGHT }}
+          />
+          <p className="text-base font-semibold text-gray-900">{reference}</p>
         </div>
       )}
 
       {/* Verse content area */}
-      <ScrollArea className="flex-1 min-h-[420px]" data-ocid="bible.panel">
+      <ScrollArea className="flex-1 min-h-[380px]" data-ocid="bible.panel">
         {loading && (
           <div
             className="h-72 flex items-center justify-center"
             data-ocid="bible.loading_state"
           >
-            <Loader2 className="w-5 h-5 text-df-sky animate-spin" />
+            <Loader2
+              className="w-5 h-5 animate-spin"
+              style={{ color: SKY_LIGHT }}
+            />
           </div>
         )}
 
@@ -277,11 +488,12 @@ export default function BibleReaderCard() {
             className="h-72 flex flex-col items-center justify-center gap-3 text-center px-4"
             data-ocid="bible.error_state"
           >
-            <p className="text-df-text-muted text-sm">{error}</p>
+            <p className="text-gray-400 text-sm">{error}</p>
             <button
               type="button"
               onClick={() => setSelectedChapter((c) => c)}
-              className="text-xs text-df-sky hover:text-df-sky/80 underline underline-offset-2 transition-colors"
+              className="text-xs hover:opacity-70 underline underline-offset-2 transition-colors"
+              style={{ color: SKY }}
             >
               Try again
             </button>
@@ -291,11 +503,29 @@ export default function BibleReaderCard() {
         {!loading && !error && verses.length > 0 && (
           <div className="pr-3 space-y-3 pb-2">
             {verses.map((v) => (
-              <div key={v.verse} className="flex gap-3 group">
-                <span className="text-[11px] font-bold text-df-sky mt-0.5 w-5 flex-shrink-0 leading-5 tabular-nums">
+              <div
+                key={v.verse}
+                ref={highlightedVerse === v.verse ? highlightedVerseRef : null}
+                className={[
+                  "flex gap-3 group transition-all duration-300",
+                  highlightedVerse === v.verse ? "rounded-lg px-2 -mx-2" : "",
+                ].join(" ")}
+                style={
+                  highlightedVerse === v.verse
+                    ? {
+                        backgroundColor: SKY_DIM,
+                        boxShadow: `0 0 0 1px ${SKY_BORDER}`,
+                      }
+                    : {}
+                }
+              >
+                <span
+                  className="text-[11px] font-bold mt-0.5 w-5 flex-shrink-0 leading-5 tabular-nums"
+                  style={{ color: SKY_LIGHT }}
+                >
                   {v.verse}
                 </span>
-                <p className="text-sm text-df-text leading-relaxed flex-1">
+                <p className="text-sm text-gray-700 leading-relaxed flex-1">
                   {v.text.trim()}
                 </p>
               </div>
@@ -308,7 +538,7 @@ export default function BibleReaderCard() {
             className="h-72 flex items-center justify-center"
             data-ocid="bible.empty_state"
           >
-            <p className="text-df-text-muted text-sm">No verses found.</p>
+            <p className="text-gray-400 text-sm">No verses found.</p>
           </div>
         )}
       </ScrollArea>

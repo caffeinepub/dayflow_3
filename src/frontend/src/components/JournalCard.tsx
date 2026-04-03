@@ -34,6 +34,11 @@ const MOODS = [
   { key: "joyful", emoji: "\uD83D\uDE0A", label: "Joyful" },
 ];
 
+const VIOLET = "oklch(0.55 0.22 280)";
+const VIOLET_LIGHT = "oklch(0.62 0.22 280)";
+const VIOLET_DIM = "oklch(0.62 0.22 280 / 0.10)";
+const VIOLET_BORDER = "oklch(0.62 0.22 280 / 0.20)";
+
 function loadData(dateStr: string): JournalData {
   try {
     const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
@@ -89,7 +94,8 @@ function useDateData(dateKey: string) {
 function Dot() {
   return (
     <span
-      className="inline-block w-1.5 h-1.5 rounded-full bg-df-violet ml-1 mb-0.5"
+      className="inline-block w-1.5 h-1.5 rounded-full ml-1 mb-0.5"
+      style={{ backgroundColor: VIOLET_LIGHT }}
       aria-hidden="true"
     />
   );
@@ -146,7 +152,7 @@ function ThoughtsTab({
         }}
         placeholder="Give your entry a title..."
         data-ocid="journal.input"
-        className="bg-white/10 border-white/10 text-white placeholder:text-white/40 text-sm h-9 focus:ring-white/20"
+        className="bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400 text-sm h-9"
       />
       <Textarea
         value={body}
@@ -156,13 +162,14 @@ function ThoughtsTab({
         }}
         placeholder="What's on your mind today? Reflect on your goals, feelings, or moments that mattered..."
         data-ocid="journal.textarea"
-        className="flex-1 bg-white/10 border-white/10 text-white placeholder:text-white/40 text-sm resize-none min-h-[120px] focus:ring-white/20"
+        className="flex-1 bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400 text-sm resize-none min-h-[120px]"
       />
       <Button
         onClick={handleSave}
         disabled={saving}
         data-ocid="journal.save_button"
-        className="bg-df-violet text-white font-semibold hover:bg-df-violet/90 h-9 text-sm"
+        className="h-9 text-sm text-white font-semibold"
+        style={{ backgroundColor: VIOLET, border: "none" }}
       >
         {saving ? (
           <>
@@ -223,13 +230,18 @@ function BulletListTab({
           onKeyDown={(e) => e.key === "Enter" && add()}
           placeholder={placeholder}
           data-ocid={inputOcid}
-          className="flex-1 bg-white/10 border-white/10 text-white placeholder:text-white/40 text-sm h-9 focus:ring-white/20"
+          className="flex-1 bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400 text-sm h-9"
         />
         <Button
           onClick={add}
           size="icon"
           data-ocid={addOcid}
-          className="bg-df-violet/20 hover:bg-df-violet/40 text-white border border-df-violet/30 h-9 w-9 shrink-0"
+          className="h-9 w-9 shrink-0 text-white"
+          style={{
+            backgroundColor: VIOLET_DIM,
+            color: VIOLET,
+            border: `1px solid ${VIOLET_BORDER}`,
+          }}
         >
           <Plus className="w-4 h-4" />
         </Button>
@@ -243,7 +255,7 @@ function BulletListTab({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="text-white/35 text-xs italic py-4 text-center"
+              className="text-gray-400 text-xs italic py-4 text-center"
               data-ocid={`${itemOcid}.empty_state`}
             >
               Nothing added yet — type above and press Enter
@@ -256,20 +268,23 @@ function BulletListTab({
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 8 }}
               transition={{ duration: 0.18 }}
-              className="flex items-start gap-2 bg-white/[0.07] rounded-lg px-3 py-2 group"
+              className="flex items-start gap-2 bg-gray-50 rounded-lg px-3 py-2 group border border-gray-100"
               data-ocid={`${itemOcid}.${idx + 1}`}
             >
-              <span className="text-df-violet mt-0.5 text-xs select-none">
+              <span
+                className="mt-0.5 text-xs select-none"
+                style={{ color: VIOLET_LIGHT }}
+              >
                 •
               </span>
-              <span className="flex-1 text-white/90 text-sm leading-snug break-words">
+              <span className="flex-1 text-gray-700 text-sm leading-snug break-words">
                 {item}
               </span>
               <button
                 type="button"
                 onClick={() => remove(idx)}
                 data-ocid={`${deleteOcid}.${idx + 1}`}
-                className="text-white/30 hover:text-white/80 transition-colors shrink-0 mt-0.5 opacity-0 group-hover:opacity-100 focus:opacity-100"
+                className="text-gray-300 hover:text-df-red transition-colors shrink-0 mt-0.5 opacity-0 group-hover:opacity-100 focus:opacity-100"
                 aria-label="Remove item"
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -319,13 +334,18 @@ function GoalsTab({
           onKeyDown={(e) => e.key === "Enter" && add()}
           placeholder="Add a goal for today..."
           data-ocid="journal.goals.input"
-          className="flex-1 bg-white/10 border-white/10 text-white placeholder:text-white/40 text-sm h-9 focus:ring-white/20"
+          className="flex-1 bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400 text-sm h-9"
         />
         <Button
           onClick={add}
           size="icon"
           data-ocid="journal.goals.add_button"
-          className="bg-df-violet/20 hover:bg-df-violet/40 text-white border border-df-violet/30 h-9 w-9 shrink-0"
+          className="h-9 w-9 shrink-0"
+          style={{
+            backgroundColor: VIOLET_DIM,
+            color: VIOLET,
+            border: `1px solid ${VIOLET_BORDER}`,
+          }}
         >
           <Plus className="w-4 h-4" />
         </Button>
@@ -339,7 +359,7 @@ function GoalsTab({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="text-white/35 text-xs italic py-4 text-center"
+              className="text-gray-400 text-xs italic py-4 text-center"
               data-ocid="journal.goals.empty_state"
             >
               No goals yet — add one above
@@ -352,7 +372,7 @@ function GoalsTab({
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 8 }}
               transition={{ duration: 0.18 }}
-              className="flex items-center gap-2.5 bg-white/[0.07] rounded-lg px-3 py-2 group"
+              className="flex items-center gap-2.5 bg-gray-50 rounded-lg px-3 py-2 group border border-gray-100"
               data-ocid={`journal.goals.item.${idx + 1}`}
             >
               <button
@@ -363,17 +383,13 @@ function GoalsTab({
                 aria-pressed={goal.done}
                 className="shrink-0 w-4 h-4 rounded border flex items-center justify-center transition-all"
                 style={{
-                  background: goal.done
-                    ? "oklch(0.62 0.22 280)"
-                    : "transparent",
-                  borderColor: goal.done
-                    ? "oklch(0.62 0.22 280)"
-                    : "oklch(1 0 0 / 0.3)",
+                  background: goal.done ? VIOLET_LIGHT : "transparent",
+                  borderColor: goal.done ? VIOLET_LIGHT : "oklch(0.82 0.02 80)",
                 }}
               >
                 {goal.done && (
                   <svg
-                    className="w-2.5 h-2.5 text-white"
+                    className="w-2.5 h-2.5"
                     viewBox="0 0 12 12"
                     fill="none"
                     role="img"
@@ -381,7 +397,7 @@ function GoalsTab({
                   >
                     <path
                       d="M2 6l3 3 5-5"
-                      stroke="currentColor"
+                      stroke="white"
                       strokeWidth="1.8"
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -391,7 +407,7 @@ function GoalsTab({
               </button>
               <span
                 className={`flex-1 text-sm leading-snug break-words ${
-                  goal.done ? "line-through text-white/40" : "text-white/90"
+                  goal.done ? "line-through text-gray-400" : "text-gray-700"
                 }`}
               >
                 {goal.text}
@@ -400,7 +416,7 @@ function GoalsTab({
                 type="button"
                 onClick={() => remove(idx)}
                 data-ocid={`journal.goals.delete_button.${idx + 1}`}
-                className="text-white/30 hover:text-white/80 transition-colors shrink-0 opacity-0 group-hover:opacity-100 focus:opacity-100"
+                className="text-gray-300 hover:text-df-red transition-colors shrink-0 opacity-0 group-hover:opacity-100 focus:opacity-100"
                 aria-label="Remove goal"
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -423,7 +439,7 @@ function MoodTab({
 }) {
   return (
     <div className="flex flex-col gap-4 flex-1">
-      <p className="text-white/60 text-xs">How are you feeling today?</p>
+      <p className="text-gray-400 text-xs">How are you feeling today?</p>
       <div className="grid grid-cols-5 gap-2">
         {MOODS.map((m) => {
           const active = mood === m.key;
@@ -436,17 +452,23 @@ function MoodTab({
               data-ocid={`journal.mood.${m.key}.toggle`}
               className={`flex flex-col items-center gap-1.5 rounded-xl py-3 px-1 border transition-all ${
                 active
-                  ? "bg-df-violet/20 border-df-violet shadow-[0_0_12px_oklch(0.62_0.22_280/0.3)]"
-                  : "bg-white/[0.06] border-white/10 hover:bg-white/[0.12]"
+                  ? "border-violet-200 shadow-sm"
+                  : "bg-gray-50 border-gray-100 hover:bg-gray-100"
               }`}
+              style={
+                active
+                  ? { backgroundColor: VIOLET_DIM, borderColor: VIOLET_BORDER }
+                  : {}
+              }
               aria-label={m.label}
               aria-pressed={active}
             >
               <span className="text-2xl leading-none">{m.emoji}</span>
               <span
                 className={`text-[10px] font-medium leading-none ${
-                  active ? "text-df-violet" : "text-white/50"
+                  active ? "" : "text-gray-400"
                 }`}
+                style={active ? { color: VIOLET } : {}}
               >
                 {m.label}
               </span>
@@ -459,10 +481,10 @@ function MoodTab({
           key={mood}
           initial={{ opacity: 0, y: 4 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-white/50 text-xs text-center"
+          className="text-gray-400 text-xs text-center"
         >
           Mood recorded{" "}
-          <span className="text-df-violet font-medium">
+          <span className="font-medium" style={{ color: VIOLET }}>
             {MOODS.find((m) => m.key === mood)?.label}
           </span>
         </motion.p>
@@ -494,24 +516,23 @@ export default function JournalCard({ dateKey }: JournalCardProps) {
 
   return (
     <div
-      className="rounded-2xl border border-df-violet/25 shadow-card card-violet-glow flex flex-col min-h-[380px] p-5 relative overflow-hidden"
-      style={{
-        background:
-          "linear-gradient(145deg, oklch(0.20 0.10 280) 0%, oklch(0.25 0.13 275) 50%, oklch(0.22 0.12 265) 100%)",
-      }}
+      className="rounded-2xl border border-gray-200 border-t-2 shadow-sm card-violet-glow flex flex-col min-h-[380px] p-5 relative overflow-hidden bg-white"
+      style={{ borderTopColor: "oklch(0.72 0.18 280)" }}
     >
-      {/* Decorative glow blobs */}
-      <div className="absolute -top-12 -right-12 w-36 h-36 rounded-full bg-df-violet/25 blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-8 -left-8 w-28 h-28 rounded-full bg-df-violet/15 blur-2xl pointer-events-none" />
-
       {/* Header */}
       <div className="flex items-center gap-2 mb-1 relative z-10">
-        <div className="w-8 h-8 rounded-xl bg-df-violet-dim flex items-center justify-center ring-1 ring-df-violet/30">
-          <BookOpen className="w-4 h-4 text-df-violet" />
+        <div
+          className="w-8 h-8 rounded-xl flex items-center justify-center"
+          style={{
+            backgroundColor: VIOLET_DIM,
+            boxShadow: `0 0 0 1px ${VIOLET_BORDER}`,
+          }}
+        >
+          <BookOpen className="w-4 h-4" style={{ color: VIOLET_LIGHT }} />
         </div>
-        <h3 className="text-sm font-semibold text-white">Daily Journal</h3>
+        <h3 className="text-sm font-semibold text-gray-900">Daily Journal</h3>
       </div>
-      <p className="text-xs text-white/50 mb-3 relative z-10">{displayDate}</p>
+      <p className="text-xs text-gray-400 mb-3 relative z-10">{displayDate}</p>
 
       {/* Tabs */}
       <Tabs
@@ -519,7 +540,7 @@ export default function JournalCard({ dateKey }: JournalCardProps) {
         className="flex flex-col flex-1 relative z-10"
       >
         <TabsList
-          className="flex w-full gap-0.5 mb-4 bg-white/[0.07] rounded-xl p-1 h-auto"
+          className="flex w-full gap-0.5 mb-4 bg-gray-100 rounded-xl p-1 h-auto"
           data-ocid="journal.tab"
         >
           {tabs.map((tab) => (
@@ -527,9 +548,15 @@ export default function JournalCard({ dateKey }: JournalCardProps) {
               key={tab.value}
               value={tab.value}
               data-ocid={`journal.${tab.value}.tab`}
-              className="flex-1 text-[10px] font-medium py-1.5 px-1 rounded-lg text-white/50 data-[state=active]:bg-df-violet data-[state=active]:text-white data-[state=active]:shadow-sm transition-all leading-none"
+              className="flex-1 text-[10px] font-medium py-1.5 px-1 rounded-lg text-gray-400 data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all leading-none"
+              style={{}}
             >
-              {tab.label}
+              <span
+                className="data-[state=active]:font-semibold"
+                style={{ color: "inherit" }}
+              >
+                {tab.label}
+              </span>
               {tab.filled && <Dot />}
             </TabsTrigger>
           ))}

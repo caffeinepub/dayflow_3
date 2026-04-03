@@ -69,8 +69,8 @@ export default {
         },
         /* DayFlow semantic tokens */
         df: {
-          red: "oklch(0.62 0.26 22)",
-          "red-dim": "oklch(0.62 0.26 22 / 0.15)",
+          red: "oklch(0.55 0.22 250)",
+          "red-dim": "oklch(0.55 0.22 250 / 0.15)",
           gold: "oklch(0.78 0.16 75)",
           "gold-dim": "oklch(0.78 0.16 75 / 0.15)",
           emerald: "oklch(0.72 0.18 158)",
@@ -90,8 +90,8 @@ export default {
           "navy-light": "oklch(0.20 0.05 245)",
           text: "oklch(0.96 0.01 240)",
           "text-muted": "oklch(0.60 0.05 240)",
-          teal: "oklch(0.62 0.26 22)",
-          "teal-dim": "oklch(0.62 0.26 22 / 0.15)",
+          teal: "oklch(0.55 0.22 250)",
+          "teal-dim": "oklch(0.55 0.22 250 / 0.15)",
         },
       },
       borderRadius: {
@@ -103,7 +103,7 @@ export default {
       },
       boxShadow: {
         card: "0 4px 32px oklch(0.05 0.02 240 / 0.7), inset 0 1px 0 oklch(1 0 0 / 0.06)",
-        glow: "0 0 30px oklch(0.62 0.26 22 / 0.35)",
+        glow: "0 0 30px oklch(0.55 0.22 250 / 0.35)",
       },
       keyframes: {
         "accordion-down": { from: { height: "0" }, to: { height: "var(--radix-accordion-content-height)" } },

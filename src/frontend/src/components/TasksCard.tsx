@@ -116,16 +116,13 @@ export default function TasksCard({ dateKey }: TasksCardProps) {
   const pct = tasks.length ? Math.round((doneCount / tasks.length) * 100) : 0;
 
   return (
-    <div className="rounded-2xl border border-df-red/20 bg-gradient-to-br from-df-navy-mid to-[oklch(0.18_0.06_20)] shadow-card card-glow flex flex-col h-full min-h-[340px] p-5 relative overflow-hidden">
-      {/* Glow blob */}
-      <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-df-red/10 blur-3xl pointer-events-none" />
-
+    <div className="rounded-2xl border border-gray-200 border-t-2 border-t-blue-300 bg-white shadow-sm card-glow flex flex-col h-full min-h-[340px] p-5 relative overflow-hidden">
       {/* Header */}
       <div className="flex items-center gap-2 mb-4 relative">
-        <div className="w-8 h-8 rounded-xl bg-df-red-dim flex items-center justify-center ring-1 ring-df-red/30">
+        <div className="w-8 h-8 rounded-xl bg-df-red-dim flex items-center justify-center ring-1 ring-df-red/20">
           <CheckSquare className="w-4 h-4 text-df-red" />
         </div>
-        <h3 className="text-sm font-semibold text-df-text">My Day Tasks</h3>
+        <h3 className="text-sm font-semibold text-gray-900">My Day Tasks</h3>
 
         {editMode ? (
           <button
@@ -138,13 +135,13 @@ export default function TasksCard({ dateKey }: TasksCardProps) {
           </button>
         ) : (
           <>
-            <span className="ml-auto text-xs text-df-text-muted">
+            <span className="ml-auto text-xs text-gray-400">
               {doneCount}/{tasks.length}
             </span>
             <button
               type="button"
               onClick={() => setEditMode(true)}
-              className="text-df-text-muted hover:text-df-red transition-colors p-1 rounded-lg hover:bg-df-red-dim"
+              className="text-gray-400 hover:text-df-red transition-colors p-1 rounded-lg hover:bg-df-red-dim"
               aria-label="Edit tasks"
               data-ocid="tasks.edit_button"
             >
@@ -156,7 +153,7 @@ export default function TasksCard({ dateKey }: TasksCardProps) {
 
       {/* Progress bar */}
       {!editMode && (
-        <div className="h-1.5 rounded-full bg-df-navy-light mb-4 overflow-hidden">
+        <div className="h-1.5 rounded-full bg-gray-100 mb-4 overflow-hidden">
           <motion.div
             className="h-full rounded-full bg-df-red"
             initial={{ width: 0 }}
@@ -180,7 +177,7 @@ export default function TasksCard({ dateKey }: TasksCardProps) {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Add a task..."
             data-ocid="todo.input"
-            className="flex-1 bg-df-navy-light border-white/[0.06] text-df-text placeholder:text-df-text-muted text-sm h-9"
+            className="flex-1 bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400 text-sm h-9"
           />
           <Button
             type="submit"
@@ -195,7 +192,7 @@ export default function TasksCard({ dateKey }: TasksCardProps) {
 
       {/* Edit mode hint */}
       {editMode && tasks.length > 0 && (
-        <p className="text-[11px] text-df-text-muted mb-3">
+        <p className="text-[11px] text-gray-400 mb-3">
           Tap a name to rename · use arrows to reorder · trash to delete
         </p>
       )}
@@ -207,7 +204,7 @@ export default function TasksCard({ dateKey }: TasksCardProps) {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-center py-8 text-df-text-muted text-sm"
+              className="text-center py-8 text-gray-400 text-sm"
               data-ocid="todo.empty_state"
             >
               No tasks for this day. Add one above!
@@ -223,7 +220,7 @@ export default function TasksCard({ dateKey }: TasksCardProps) {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 8 }}
                 transition={{ duration: 0.18 }}
-                className="flex items-center gap-2 rounded-xl px-2 py-1.5 bg-white/[0.02] border border-white/[0.05]"
+                className="flex items-center gap-2 rounded-xl px-2 py-1.5 bg-gray-50 border border-gray-200"
                 data-ocid={`todo.edit_item.${i + 1}`}
               >
                 {/* Reorder */}
@@ -232,7 +229,7 @@ export default function TasksCard({ dateKey }: TasksCardProps) {
                     type="button"
                     onClick={() => moveUp(i)}
                     disabled={i === 0}
-                    className="text-df-text-muted hover:text-df-text disabled:opacity-20 transition-colors p-0.5"
+                    className="text-gray-400 hover:text-gray-700 disabled:opacity-20 transition-colors p-0.5"
                     aria-label="Move up"
                   >
                     <ArrowUp className="w-3 h-3" />
@@ -241,7 +238,7 @@ export default function TasksCard({ dateKey }: TasksCardProps) {
                     type="button"
                     onClick={() => moveDown(i)}
                     disabled={i === tasks.length - 1}
-                    className="text-df-text-muted hover:text-df-text disabled:opacity-20 transition-colors p-0.5"
+                    className="text-gray-400 hover:text-gray-700 disabled:opacity-20 transition-colors p-0.5"
                     aria-label="Move down"
                   >
                     <ArrowDown className="w-3 h-3" />
@@ -263,14 +260,14 @@ export default function TasksCard({ dateKey }: TasksCardProps) {
                         setEditingText("");
                       }
                     }}
-                    className="flex-1 bg-df-navy-light border border-df-red/30 rounded-lg px-2 py-1 text-sm text-df-text outline-none focus:border-df-red/60"
+                    className="flex-1 bg-white border border-df-red/30 rounded-lg px-2 py-1 text-sm text-gray-800 outline-none focus:border-df-red/60"
                     data-ocid={`todo.rename_input.${i + 1}`}
                   />
                 ) : (
                   <button
                     type="button"
                     onClick={() => startRename(task)}
-                    className="flex-1 text-left text-sm text-df-text hover:text-df-red transition-colors truncate px-1"
+                    className="flex-1 text-left text-sm text-gray-700 hover:text-df-red transition-colors truncate px-1"
                     data-ocid={`todo.rename_button.${i + 1}`}
                   >
                     {task.title}
@@ -281,7 +278,7 @@ export default function TasksCard({ dateKey }: TasksCardProps) {
                 <button
                   type="button"
                   onClick={() => remove(task.id)}
-                  className="text-df-text-muted hover:text-df-red transition-colors p-1 flex-shrink-0"
+                  className="text-gray-400 hover:text-df-red transition-colors p-1 flex-shrink-0"
                   aria-label="Delete task"
                   data-ocid={`todo.delete_button.${i + 1}`}
                 >
@@ -296,7 +293,7 @@ export default function TasksCard({ dateKey }: TasksCardProps) {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 12 }}
                 transition={{ duration: 0.2 }}
-                className="flex items-center gap-3 group rounded-xl px-3 py-2.5 hover:bg-white/[0.03] transition-colors"
+                className="flex items-center gap-3 group rounded-xl px-3 py-2.5 hover:bg-gray-50 transition-colors"
                 data-ocid={`todo.item.${i + 1}`}
               >
                 <button
@@ -306,7 +303,7 @@ export default function TasksCard({ dateKey }: TasksCardProps) {
                   className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
                     task.done
                       ? "bg-df-red border-df-red"
-                      : "border-white/20 hover:border-df-red"
+                      : "border-gray-300 hover:border-df-red"
                   }`}
                 >
                   {task.done && (
@@ -321,7 +318,7 @@ export default function TasksCard({ dateKey }: TasksCardProps) {
                       <title>Checked</title>
                       <path
                         d="M2 6l3 3 5-5"
-                        stroke="oklch(0.96 0.01 240)"
+                        stroke="white"
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -331,9 +328,7 @@ export default function TasksCard({ dateKey }: TasksCardProps) {
                 </button>
                 <span
                   className={`flex-1 text-sm transition-all duration-300 ${
-                    task.done
-                      ? "text-df-text-muted line-through"
-                      : "text-df-text"
+                    task.done ? "text-gray-400 line-through" : "text-gray-700"
                   }`}
                 >
                   {task.title}
@@ -342,7 +337,7 @@ export default function TasksCard({ dateKey }: TasksCardProps) {
                   type="button"
                   onClick={() => remove(task.id)}
                   data-ocid={`todo.delete_button.${i + 1}`}
-                  className="opacity-0 group-hover:opacity-100 text-df-text-muted hover:text-df-red transition-all duration-150 p-1"
+                  className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-df-red transition-all duration-150 p-1"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>

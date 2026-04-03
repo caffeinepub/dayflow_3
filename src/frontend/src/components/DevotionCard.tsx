@@ -2889,19 +2889,36 @@ export default function DevotionCard({ dayOfYear }: DevotionCardProps) {
   const canGoNext = displayedDay < 365;
 
   return (
-    <div className="rounded-2xl border border-df-gold/20 bg-gradient-to-br from-df-navy-mid to-[oklch(0.16_0.06_75)] shadow-card card-gold-glow flex flex-col h-full min-h-[340px] p-5 relative overflow-hidden">
-      {/* Gold glow blob */}
-      <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-df-gold/[0.08] blur-3xl pointer-events-none" />
-
+    <div
+      className="rounded-2xl border border-gray-200 bg-white shadow-sm card-gold-glow flex flex-col h-full min-h-[340px] p-5 relative overflow-hidden"
+      style={{
+        borderTopWidth: "2px",
+        borderTopColor: "oklch(0.78 0.16 75 / 0.5)",
+      }}
+    >
       {/* Header */}
       <div className="flex items-center gap-2 mb-4 relative">
-        <div className="w-8 h-8 rounded-xl bg-df-gold-dim flex items-center justify-center flex-shrink-0 ring-1 ring-df-gold/30">
-          <BookMarked className="w-4 h-4 text-df-gold" />
+        <div
+          className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+          style={{
+            backgroundColor: "oklch(0.78 0.16 75 / 0.12)",
+            boxShadow: "0 0 0 1px oklch(0.78 0.16 75 / 0.2)",
+          }}
+        >
+          <BookMarked
+            className="w-4 h-4"
+            style={{ color: "oklch(0.68 0.16 75)" }}
+          />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="text-sm font-semibold text-df-text">Daily Devotion</h3>
+          <h3 className="text-sm font-semibold text-gray-900">
+            Daily Devotion
+          </h3>
           <div className="flex items-center gap-1.5">
-            <p className="text-[10px] text-df-gold/70">
+            <p
+              className="text-[10px]"
+              style={{ color: "oklch(0.68 0.16 75 / 0.8)" }}
+            >
               {offset === 0
                 ? `Today · Day ${displayedDay} of 365`
                 : `Day ${displayedDay} of 365`}
@@ -2910,7 +2927,8 @@ export default function DevotionCard({ dayOfYear }: DevotionCardProps) {
               <button
                 type="button"
                 onClick={() => setOffset(0)}
-                className="text-[10px] text-df-gold hover:text-df-gold/70 font-medium transition-colors"
+                className="text-[10px] font-medium transition-colors hover:opacity-70"
+                style={{ color: "oklch(0.68 0.16 75)" }}
                 data-ocid="devotion.toggle"
               >
                 · Back to Today
@@ -2925,7 +2943,7 @@ export default function DevotionCard({ dayOfYear }: DevotionCardProps) {
             onClick={() => setOffset((prev) => prev - 1)}
             disabled={!canGoPrev}
             aria-label="Previous devotion"
-            className="text-df-text-muted hover:text-df-text transition-colors p-0.5 rounded-md hover:bg-white/[0.06] disabled:opacity-25 disabled:cursor-not-allowed"
+            className="text-gray-400 hover:text-gray-700 transition-colors p-0.5 rounded-md hover:bg-gray-100 disabled:opacity-25 disabled:cursor-not-allowed"
             data-ocid="devotion.pagination_prev"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -2935,7 +2953,7 @@ export default function DevotionCard({ dayOfYear }: DevotionCardProps) {
             onClick={() => setOffset((prev) => prev + 1)}
             disabled={!canGoNext}
             aria-label="Next devotion"
-            className="text-df-text-muted hover:text-df-text transition-colors p-0.5 rounded-md hover:bg-white/[0.06] disabled:opacity-25 disabled:cursor-not-allowed"
+            className="text-gray-400 hover:text-gray-700 transition-colors p-0.5 rounded-md hover:bg-gray-100 disabled:opacity-25 disabled:cursor-not-allowed"
             data-ocid="devotion.pagination_next"
           >
             <ChevronRight className="w-4 h-4" />
@@ -2955,31 +2973,55 @@ export default function DevotionCard({ dayOfYear }: DevotionCardProps) {
       >
         {/* Reference badge */}
         <div className="inline-flex">
-          <span className="text-[11px] font-semibold bg-df-gold-dim text-df-gold rounded-full px-3 py-1 border border-df-gold/20">
+          <span
+            className="text-[11px] font-semibold rounded-full px-3 py-1 border"
+            style={{
+              backgroundColor: "oklch(0.78 0.16 75 / 0.10)",
+              color: "oklch(0.58 0.16 75)",
+              borderColor: "oklch(0.78 0.16 75 / 0.25)",
+            }}
+          >
             {devotion.reference}
           </span>
         </div>
 
         {/* Verse text */}
-        <blockquote className="border-l-2 border-df-gold/40 pl-3">
-          <p className="text-sm leading-relaxed text-df-text/90 italic">
+        <blockquote
+          className="pl-3"
+          style={{ borderLeft: "2px solid oklch(0.78 0.16 75 / 0.35)" }}
+        >
+          <p className="text-sm leading-relaxed text-gray-700 italic">
             {devotion.verse}
           </p>
         </blockquote>
 
         {/* Divider */}
         <div className="flex items-center gap-2">
-          <div className="flex-1 h-px bg-df-gold/10" />
-          <span className="text-df-gold/40 text-xs">✦</span>
-          <div className="flex-1 h-px bg-df-gold/10" />
+          <div className="flex-1 h-px bg-gray-100" />
+          <span
+            className="text-xs"
+            style={{ color: "oklch(0.78 0.16 75 / 0.45)" }}
+          >
+            ✦
+          </span>
+          <div className="flex-1 h-px bg-gray-100" />
         </div>
 
         {/* Reflection */}
-        <div className="bg-df-gold/[0.06] rounded-xl p-3 border border-df-gold/10">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-df-gold/70 mb-1.5">
+        <div
+          className="rounded-xl p-3 border"
+          style={{
+            backgroundColor: "oklch(0.78 0.16 75 / 0.06)",
+            borderColor: "oklch(0.78 0.16 75 / 0.15)",
+          }}
+        >
+          <p
+            className="text-[11px] font-semibold uppercase tracking-wider mb-1.5"
+            style={{ color: "oklch(0.68 0.16 75 / 0.8)" }}
+          >
             Reflection
           </p>
-          <p className="text-xs text-df-text-muted leading-relaxed">
+          <p className="text-xs text-gray-500 leading-relaxed">
             {devotion.reflection}
           </p>
         </div>

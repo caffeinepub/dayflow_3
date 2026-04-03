@@ -28,9 +28,10 @@ const DEFAULT_ITEMS = [
 const ITEMS_KEY = "dayflow_habits_items";
 const DONE_KEY = (dateKey: string) => `dayflow_habits_done_${dateKey}`;
 
-const EMERALD = "oklch(0.72 0.18 158)";
-const EMERALD_DIM = "oklch(0.72 0.18 158 / 0.15)";
-const EMERALD_BANNER = "oklch(0.72 0.18 158 / 0.12)";
+const EMERALD = "oklch(0.62 0.18 158)";
+const EMERALD_LIGHT = "oklch(0.72 0.18 158)";
+const EMERALD_DIM = "oklch(0.72 0.18 158 / 0.12)";
+const EMERALD_BANNER = "oklch(0.72 0.18 158 / 0.08)";
 
 type EditEntry = { id: number; value: string };
 
@@ -167,24 +168,21 @@ export default function DailyHabitsCard() {
   const pct = items.length ? Math.round((doneCount / items.length) * 100) : 0;
 
   return (
-    <div className="rounded-2xl border border-[oklch(0.72_0.18_158/0.25)] bg-gradient-to-br from-df-navy-mid to-[oklch(0.16_0.06_158)] shadow-card card-emerald-glow flex flex-col h-full min-h-[340px] p-5 relative overflow-hidden">
-      {/* Glow blob */}
-      <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-[oklch(0.72_0.18_158/0.08)] blur-3xl pointer-events-none" />
-
+    <div className="rounded-2xl border border-gray-200 border-t-2 border-t-emerald-300 bg-white shadow-sm card-emerald-glow flex flex-col h-full min-h-[340px] p-5 relative overflow-hidden">
       {/* Header */}
       <div className="flex items-center gap-2 mb-4 relative">
         <div
           className="w-8 h-8 rounded-xl flex items-center justify-center"
           style={{
             background: EMERALD_DIM,
-            boxShadow: "0 0 0 1px oklch(0.72 0.18 158 / 0.3)",
+            boxShadow: "0 0 0 1px oklch(0.72 0.18 158 / 0.2)",
           }}
         >
-          <Star className="w-4 h-4" style={{ color: EMERALD }} />
+          <Star className="w-4 h-4" style={{ color: EMERALD_LIGHT }} />
         </div>
-        <h3 className="text-sm font-semibold text-df-text">Daily Habits</h3>
+        <h3 className="text-sm font-semibold text-gray-900">Daily Habits</h3>
         {!isEditing && (
-          <span className="ml-auto text-xs text-df-text-muted">
+          <span className="ml-auto text-xs text-gray-400">
             {doneCount}/{items.length}
           </span>
         )}
@@ -195,11 +193,11 @@ export default function DailyHabitsCard() {
           data-ocid={isEditing ? "habits.save_button" : "habits.edit_button"}
           className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium transition-all duration-150"
           style={{
-            background: isEditing ? EMERALD_DIM : "oklch(1 0 0 / 0.04)",
-            color: isEditing ? EMERALD : "oklch(0.67 0.05 240)",
+            background: isEditing ? EMERALD_DIM : "oklch(0.97 0.01 80)",
+            color: isEditing ? EMERALD : "oklch(0.48 0.02 60)",
             border: isEditing
-              ? "1px solid oklch(0.72 0.18 158 / 0.3)"
-              : "1px solid oklch(1 0 0 / 0.06)",
+              ? "1px solid oklch(0.72 0.18 158 / 0.25)"
+              : "1px solid oklch(0.88 0.02 80)",
           }}
           aria-label={isEditing ? "Save edits" : "Edit habits"}
         >
@@ -219,10 +217,10 @@ export default function DailyHabitsCard() {
 
       {/* Progress bar (hidden while editing) */}
       {!isEditing && (
-        <div className="h-1.5 rounded-full bg-df-navy-light mb-4 overflow-hidden">
+        <div className="h-1.5 rounded-full bg-gray-100 mb-4 overflow-hidden">
           <motion.div
             className="h-full rounded-full"
-            style={{ background: EMERALD }}
+            style={{ background: EMERALD_LIGHT }}
             initial={{ width: 0 }}
             animate={{ width: `${pct}%` }}
             transition={{ duration: 0.4 }}
@@ -255,7 +253,7 @@ export default function DailyHabitsCard() {
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
-            className="text-xs text-df-text-muted mb-3"
+            className="text-xs text-gray-400 mb-3"
           >
             Rename, reorder, or remove habits. Tap Done to save.
           </motion.p>
@@ -270,7 +268,7 @@ export default function DailyHabitsCard() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-center py-6 text-df-text-muted text-sm"
+              className="text-center py-6 text-gray-400 text-sm"
               data-ocid="habits.empty_state"
             >
               Add your first habit below.
@@ -286,7 +284,7 @@ export default function DailyHabitsCard() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 12 }}
                 transition={{ duration: 0.2 }}
-                className="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:bg-white/[0.03] transition-colors"
+                className="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:bg-gray-50 transition-colors"
                 data-ocid={`habits.item.${i + 1}`}
               >
                 <button
@@ -295,8 +293,10 @@ export default function DailyHabitsCard() {
                   data-ocid={`habits.checkbox.${i + 1}`}
                   className="w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-all duration-200"
                   style={{
-                    backgroundColor: done[item] ? EMERALD : "transparent",
-                    borderColor: done[item] ? EMERALD : "rgba(255,255,255,0.2)",
+                    backgroundColor: done[item] ? EMERALD_LIGHT : "transparent",
+                    borderColor: done[item]
+                      ? EMERALD_LIGHT
+                      : "oklch(0.82 0.02 80)",
                   }}
                   aria-label={`Toggle ${item}`}
                 >
@@ -312,7 +312,7 @@ export default function DailyHabitsCard() {
                       <title>Checked</title>
                       <path
                         d="M2 6l3 3 5-5"
-                        stroke="oklch(0.12 0.035 240)"
+                        stroke="white"
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -322,9 +322,7 @@ export default function DailyHabitsCard() {
                 </button>
                 <span
                   className={`flex-1 text-sm transition-all duration-300 ${
-                    done[item]
-                      ? "text-df-text-muted line-through"
-                      : "text-df-text"
+                    done[item] ? "text-gray-400 line-through" : "text-gray-700"
                   }`}
                 >
                   {item}
@@ -341,7 +339,7 @@ export default function DailyHabitsCard() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 8 }}
                 transition={{ duration: 0.15 }}
-                className="flex items-center gap-2 rounded-xl px-2 py-1.5 bg-white/[0.03] border border-white/[0.04]"
+                className="flex items-center gap-2 rounded-xl px-2 py-1.5 bg-gray-50 border border-gray-200"
                 data-ocid={`habits.item.${i + 1}`}
               >
                 {/* Reorder buttons */}
@@ -350,7 +348,7 @@ export default function DailyHabitsCard() {
                     type="button"
                     onClick={() => moveUp(i)}
                     disabled={i === 0}
-                    className="p-0.5 rounded transition-colors disabled:opacity-20 text-df-text-muted hover:text-df-text"
+                    className="p-0.5 rounded transition-colors disabled:opacity-20 text-gray-400 hover:text-gray-700"
                     aria-label="Move up"
                   >
                     <ChevronUp className="w-3 h-3" />
@@ -359,7 +357,7 @@ export default function DailyHabitsCard() {
                     type="button"
                     onClick={() => moveDown(i)}
                     disabled={i === editEntries.length - 1}
-                    className="p-0.5 rounded transition-colors disabled:opacity-20 text-df-text-muted hover:text-df-text"
+                    className="p-0.5 rounded transition-colors disabled:opacity-20 text-gray-400 hover:text-gray-700"
                     aria-label="Move down"
                   >
                     <ChevronDown className="w-3 h-3" />
@@ -370,7 +368,7 @@ export default function DailyHabitsCard() {
                 <Input
                   value={entry.value}
                   onChange={(e) => updateEditValue(entry.id, e.target.value)}
-                  className="flex-1 bg-df-navy-light border-white/[0.06] text-df-text placeholder:text-df-text-muted text-sm h-8 px-2"
+                  className="flex-1 bg-white border-gray-200 text-gray-800 placeholder:text-gray-400 text-sm h-8 px-2"
                   aria-label={`Edit habit ${i + 1}`}
                 />
 
@@ -379,7 +377,7 @@ export default function DailyHabitsCard() {
                   type="button"
                   onClick={() => removeEditItem(i)}
                   data-ocid={`habits.delete_button.${i + 1}`}
-                  className="p-1.5 rounded-lg text-df-text-muted hover:text-df-red hover:bg-white/[0.06] transition-all duration-150 flex-shrink-0"
+                  className="p-1.5 rounded-lg text-gray-400 hover:text-df-red hover:bg-red-50 transition-all duration-150 flex-shrink-0"
                   aria-label={`Remove habit ${i + 1}`}
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -402,7 +400,7 @@ export default function DailyHabitsCard() {
           onChange={(e) => setNewItem(e.target.value)}
           placeholder="Add a habit..."
           data-ocid="habits.input"
-          className="flex-1 bg-df-navy-light border-white/[0.06] text-df-text placeholder:text-df-text-muted text-sm h-9"
+          className="flex-1 bg-gray-50 border-gray-200 text-gray-800 placeholder:text-gray-400 text-sm h-9"
         />
         <button
           type="submit"
