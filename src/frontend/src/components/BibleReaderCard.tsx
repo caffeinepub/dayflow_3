@@ -1,6 +1,6 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChevronLeft, ChevronRight, Library, Loader2 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 const OLD_TESTAMENT: { name: string; chapters: number }[] = [
   { name: "Genesis", chapters: 50 },
@@ -90,22 +90,7 @@ interface BibleApiResponse {
   translation_name: string;
 }
 
-function scrollActiveChipIntoView(stripEl: HTMLDivElement | null) {
-  if (!stripEl) return;
-  const active = stripEl.querySelector<HTMLButtonElement>(
-    "[data-active='true']",
-  );
-  if (active) {
-    active.scrollIntoView({
-      inline: "center",
-      block: "nearest",
-      behavior: "smooth",
-    });
-  }
-}
-
 export default function BibleReaderCard() {
-  const [testament, setTestament] = useState<"OT" | "NT">("NT");
   const [selectedBook, setSelectedBook] = useState("John");
   const [selectedChapter, setSelectedChapter] = useState(3);
   const [verses, setVerses] = useState<BibleVerse[]>([]);
@@ -114,27 +99,12 @@ export default function BibleReaderCard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const chapterStripRef = useRef<HTMLDivElement>(null);
-
-  const currentBooks = testament === "OT" ? OLD_TESTAMENT : NEW_TESTAMENT;
   const currentBook = BIBLE_BOOKS.find((b) => b.name === selectedBook);
   const maxChapters = currentBook?.chapters ?? 1;
-
-  const handleTestamentChange = (t: "OT" | "NT") => {
-    setTestament(t);
-    const firstBook = t === "OT" ? OLD_TESTAMENT[0] : NEW_TESTAMENT[0];
-    setSelectedBook(firstBook.name);
-    setSelectedChapter(1);
-  };
 
   const handleBookChange = (book: string) => {
     setSelectedBook(book);
     setSelectedChapter(1);
-  };
-
-  const handleChapterChange = (ch: number) => {
-    setSelectedChapter(ch);
-    scrollActiveChipIntoView(chapterStripRef.current);
   };
 
   const handlePrevChapter = () => {
@@ -144,8 +114,6 @@ export default function BibleReaderCard() {
       const idx = BIBLE_BOOKS.findIndex((b) => b.name === selectedBook);
       if (idx > 0) {
         const prevBook = BIBLE_BOOKS[idx - 1];
-        const inOT = OLD_TESTAMENT.some((b) => b.name === prevBook.name);
-        setTestament(inOT ? "OT" : "NT");
         setSelectedBook(prevBook.name);
         setSelectedChapter(prevBook.chapters);
       }
@@ -159,8 +127,6 @@ export default function BibleReaderCard() {
       const idx = BIBLE_BOOKS.findIndex((b) => b.name === selectedBook);
       if (idx < BIBLE_BOOKS.length - 1) {
         const nextBook = BIBLE_BOOKS[idx + 1];
-        const inOT = OLD_TESTAMENT.some((b) => b.name === nextBook.name);
-        setTestament(inOT ? "OT" : "NT");
         setSelectedBook(nextBook.name);
         setSelectedChapter(1);
       }
@@ -204,7 +170,7 @@ export default function BibleReaderCard() {
 
   return (
     <div
-      className="bg-df-navy-light border border-white/[0.06] rounded-2xl p-5 flex flex-col gap-4 shadow-card min-h-[500px]"
+      className="bg-df-navy-light border border-white/[0.06] rounded-2xl p-5 flex flex-col gap-4 shadow-card min-h-[600px]"
       data-ocid="bible.card"
     >
       {/* Header */}
@@ -224,97 +190,59 @@ export default function BibleReaderCard() {
         </div>
       </div>
 
-      {/* Testament toggle */}
-      <div
-        className="flex gap-1.5 p-1 bg-df-navy rounded-xl"
-        data-ocid="bible.tab"
-      >
-        <button
-          type="button"
-          onClick={() => handleTestamentChange("OT")}
-          className={`flex-1 text-xs font-semibold py-1.5 px-2 rounded-lg transition-all duration-200 ${
-            testament === "OT"
-              ? "bg-df-red text-white shadow-sm"
-              : "text-df-text-muted hover:text-df-text"
-          }`}
+      {/* Navigation row: book dropdown + chapter prev/next */}
+      <div className="flex items-center gap-2" data-ocid="bible.nav">
+        <select
+          value={selectedBook}
+          onChange={(e) => handleBookChange(e.target.value)}
+          className="flex-1 bg-df-navy border border-white/[0.08] text-df-text text-sm font-medium rounded-xl px-3 py-2 focus:outline-none focus:ring-1 focus:ring-df-red cursor-pointer"
+          aria-label="Select book"
         >
-          Old Testament
-        </button>
-        <button
-          type="button"
-          onClick={() => handleTestamentChange("NT")}
-          className={`flex-1 text-xs font-semibold py-1.5 px-2 rounded-lg transition-all duration-200 ${
-            testament === "NT"
-              ? "bg-df-red text-white shadow-sm"
-              : "text-df-text-muted hover:text-df-text"
-          }`}
+          <optgroup label="Old Testament">
+            {OLD_TESTAMENT.map((b) => (
+              <option key={b.name} value={b.name}>
+                {b.name}
+              </option>
+            ))}
+          </optgroup>
+          <optgroup label="New Testament">
+            {NEW_TESTAMENT.map((b) => (
+              <option key={b.name} value={b.name}>
+                {b.name}
+              </option>
+            ))}
+          </optgroup>
+        </select>
+
+        <select
+          value={selectedChapter}
+          onChange={(e) => setSelectedChapter(Number(e.target.value))}
+          className="w-20 bg-df-navy border border-white/[0.08] text-df-text text-sm font-medium rounded-xl px-3 py-2 focus:outline-none focus:ring-1 focus:ring-df-red cursor-pointer"
+          aria-label="Select chapter"
         >
-          New Testament
-        </button>
-      </div>
+          {Array.from({ length: maxChapters }, (_, i) => i + 1).map((ch) => (
+            <option key={ch} value={ch}>
+              Ch {ch}
+            </option>
+          ))}
+        </select>
 
-      {/* Book grid */}
-      <div
-        className="grid grid-cols-3 gap-1.5 max-h-[120px] overflow-y-auto scrollbar-thin"
-        data-ocid="bible.select"
-      >
-        {currentBooks.map((book) => (
-          <button
-            key={book.name}
-            type="button"
-            onClick={() => handleBookChange(book.name)}
-            className={`text-[11px] font-medium px-2 py-1.5 rounded-lg text-left truncate transition-all duration-150 ${
-              selectedBook === book.name
-                ? "bg-df-red text-white"
-                : "bg-white/[0.06] text-df-text-muted hover:bg-white/[0.10] hover:text-df-text"
-            }`}
-            title={book.name}
-          >
-            {book.name}
-          </button>
-        ))}
-      </div>
-
-      {/* Chapter strip */}
-      <div className="flex items-center gap-1">
         <button
           type="button"
           onClick={handlePrevChapter}
           disabled={isFirstChapterOfFirst}
-          className="w-7 h-7 flex items-center justify-center rounded-lg text-df-text-muted hover:text-df-text hover:bg-white/[0.06] disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex-shrink-0"
+          className="w-9 h-9 flex items-center justify-center rounded-xl text-df-text-muted hover:text-df-text hover:bg-white/[0.06] disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex-shrink-0"
           data-ocid="bible.pagination_prev"
           aria-label="Previous chapter"
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
 
-        <div
-          ref={chapterStripRef}
-          className="flex-1 flex gap-1 overflow-x-auto scrollbar-thin py-0.5"
-        >
-          {Array.from({ length: maxChapters }, (_, i) => i + 1).map((ch) => (
-            <button
-              key={ch}
-              type="button"
-              data-active={ch === selectedChapter ? "true" : "false"}
-              onClick={() => handleChapterChange(ch)}
-              className={`flex-shrink-0 w-7 h-7 text-[11px] font-semibold rounded-lg transition-all duration-150 ${
-                ch === selectedChapter
-                  ? "bg-df-red text-white shadow-sm"
-                  : "bg-white/[0.06] text-df-text-muted hover:bg-white/[0.10] hover:text-df-text"
-              }`}
-              aria-label={`Chapter ${ch}`}
-            >
-              {ch}
-            </button>
-          ))}
-        </div>
-
         <button
           type="button"
           onClick={handleNextChapter}
           disabled={isLastChapterOfLast}
-          className="w-7 h-7 flex items-center justify-center rounded-lg text-df-text-muted hover:text-df-text hover:bg-white/[0.06] disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex-shrink-0"
+          className="w-9 h-9 flex items-center justify-center rounded-xl text-df-text-muted hover:text-df-text hover:bg-white/[0.06] disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex-shrink-0"
           data-ocid="bible.pagination_next"
           aria-label="Next chapter"
         >
@@ -324,14 +252,14 @@ export default function BibleReaderCard() {
 
       {/* Reference label */}
       {reference && !loading && (
-        <div className="flex items-center gap-2 -mb-2">
+        <div className="flex items-center gap-2 -mb-1">
           <span className="w-1.5 h-1.5 rounded-full bg-df-red flex-shrink-0" />
           <p className="text-base font-semibold text-df-text">{reference}</p>
         </div>
       )}
 
       {/* Verse content area */}
-      <ScrollArea className="h-[340px]" data-ocid="bible.panel">
+      <ScrollArea className="flex-1 min-h-[420px]" data-ocid="bible.panel">
         {loading && (
           <div
             className="h-72 flex items-center justify-center"
