@@ -2,6 +2,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   ChevronLeft,
   ChevronRight,
+  ExternalLink,
   Library,
   Loader2,
   Search,
@@ -102,9 +103,28 @@ interface BibleApiResponse {
   translation_name: string;
 }
 
-interface BibleSearchResponse {
-  verses: BibleVerse[];
-  total_results?: number;
+// Reference pattern: "John 3:16" or "Genesis 1" etc.
+const REFERENCE_REGEX = /^(.+?)\s+(\d+)(?::(\d+))?$/i;
+
+function detectReference(
+  query: string,
+): { book: string; chapter: number; verse: number | null } | null {
+  const match = query.trim().match(REFERENCE_REGEX);
+  if (!match) return null;
+
+  const bookQuery = match[1].trim();
+  const chapter = Number(match[2]);
+  const verse = match[3] ? Number(match[3]) : null;
+
+  // Case-insensitive book name lookup
+  const found = BIBLE_BOOKS.find(
+    (b) => b.name.toLowerCase() === bookQuery.toLowerCase(),
+  );
+  if (!found) return null;
+
+  if (chapter < 1 || chapter > found.chapters) return null;
+
+  return { book: found.name, chapter, verse };
 }
 
 export default function BibleReaderCard() {
@@ -116,15 +136,11 @@ export default function BibleReaderCard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Search state
+  // Search state (synchronous — no async needed)
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<BibleVerse[] | null>(null);
-  const [searchLoading, setSearchLoading] = useState(false);
-  const [searchError, setSearchError] = useState<string | null>(null);
   const [highlightedVerse, setHighlightedVerse] = useState<number | null>(null);
 
   const highlightedVerseRef = useRef<HTMLDivElement | null>(null);
-  const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const currentBook = BIBLE_BOOKS.find((b) => b.name === selectedBook);
   const maxChapters = currentBook?.chapters ?? 1;
@@ -202,65 +218,43 @@ export default function BibleReaderCard() {
     }
   }, [highlightedVerse]);
 
-  // Debounced search
-  useEffect(() => {
-    if (searchDebounceRef.current) {
-      clearTimeout(searchDebounceRef.current);
-    }
+  // -- Synchronous search logic --
+  const trimmedQuery = searchQuery.trim();
+  const showSearchPanel = trimmedQuery.length > 0;
 
-    const trimmed = searchQuery.trim();
-    if (!trimmed) {
-      setSearchResults(null);
-      setSearchError(null);
-      setSearchLoading(false);
-      return;
-    }
+  // Try reference detection first
+  const detectedRef =
+    trimmedQuery.length > 1 ? detectReference(trimmedQuery) : null;
 
-    setSearchLoading(true);
-    setSearchError(null);
+  // Local keyword matches in current chapter
+  const localMatches =
+    trimmedQuery.length > 1 && !detectedRef
+      ? verses.filter((v) =>
+          v.text.toLowerCase().includes(trimmedQuery.toLowerCase()),
+        )
+      : [];
 
-    searchDebounceRef.current = setTimeout(async () => {
-      try {
-        const url = `https://bible-api.com/search?q=${encodeURIComponent(trimmed)}&translation=kjv`;
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data: BibleSearchResponse = await res.json();
-        const results = (data.verses ?? []).slice(0, 20);
-        setSearchResults(results);
-        if (results.length === 0) {
-          setSearchError(null);
-        }
-      } catch {
-        setSearchResults([]);
-        setSearchError("Search failed. Please try again.");
-      } finally {
-        setSearchLoading(false);
-      }
-    }, 400);
+  const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(`${trimmedQuery} Bible verse KJV`)}`;
 
-    return () => {
-      if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
-    };
-  }, [searchQuery]);
-
-  const handleSearchResultClick = (result: BibleVerse) => {
-    setSelectedBook(result.book_name);
-    setSelectedChapter(result.chapter);
-    setHighlightedVerse(result.verse);
+  const handleSearchResultClick = (v: BibleVerse) => {
+    setHighlightedVerse(v.verse);
     setSearchQuery("");
-    setSearchResults(null);
-    setSearchError(null);
+  };
+
+  const handleReferenceNav = (ref: {
+    book: string;
+    chapter: number;
+    verse: number | null;
+  }) => {
+    setSelectedBook(ref.book);
+    setSelectedChapter(ref.chapter);
+    if (ref.verse !== null) setHighlightedVerse(ref.verse);
+    setSearchQuery("");
   };
 
   const handleClearSearch = () => {
     setSearchQuery("");
-    setSearchResults(null);
-    setSearchError(null);
-    setSearchLoading(false);
   };
-
-  const showSearchPanel =
-    searchLoading || searchError !== null || searchResults !== null;
 
   const isFirstChapterOfFirst =
     selectedBook === BIBLE_BOOKS[0].name && selectedChapter === 1;
@@ -306,22 +300,15 @@ export default function BibleReaderCard() {
           className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 focus-within:ring-1 transition-all"
           style={{ "--tw-ring-color": SKY_BORDER } as React.CSSProperties}
         >
-          {searchLoading ? (
-            <Loader2
-              className="w-4 h-4 flex-shrink-0 animate-spin"
-              style={{ color: SKY_LIGHT }}
-            />
-          ) : (
-            <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
-          )}
+          <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search verses..."
+            placeholder="Search verses or type John 3:16..."
             className="flex-1 bg-transparent text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none"
             data-ocid="bible.search_input"
-            aria-label="Search verses by keyword"
+            aria-label="Search verses by keyword or reference"
           />
           {searchQuery && (
             <button
@@ -338,62 +325,108 @@ export default function BibleReaderCard() {
         {/* Search results panel */}
         {showSearchPanel && (
           <div
-            className="mt-1 bg-white border border-gray-200 rounded-xl p-2 max-h-60 overflow-y-auto z-10 relative shadow-md"
+            className="mt-1 bg-white border border-gray-200 rounded-xl p-2 max-h-64 overflow-y-auto z-10 relative shadow-md"
             data-ocid="bible.search_results"
           >
-            {searchLoading && (
-              <div className="flex items-center justify-center py-6">
-                <Loader2
-                  className="w-5 h-5 animate-spin"
-                  style={{ color: SKY_LIGHT }}
-                />
+            {/* Reference detection — jump directly */}
+            {detectedRef && (
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 px-3 pt-1 pb-1">
+                  Go to Reference
+                </p>
+                <button
+                  type="button"
+                  onClick={() => handleReferenceNav(detectedRef)}
+                  className="w-full text-left rounded-lg px-3 py-2 hover:bg-gray-50 transition-colors group"
+                  data-ocid="bible.search_result_item"
+                >
+                  <span
+                    className="block text-sm font-bold leading-tight"
+                    style={{ color: SKY }}
+                  >
+                    {detectedRef.book} {detectedRef.chapter}
+                    {detectedRef.verse !== null ? `:${detectedRef.verse}` : ""}
+                  </span>
+                  <span className="text-xs text-gray-400">
+                    Jump to this passage
+                  </span>
+                </button>
               </div>
             )}
 
-            {!searchLoading && searchError && (
-              <p className="text-gray-400 text-xs text-center py-4 px-3">
-                {searchError}
-              </p>
+            {/* Local keyword matches */}
+            {!detectedRef && (
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 px-3 pt-1 pb-1">
+                  Matches in {selectedBook} {selectedChapter}
+                </p>
+                {localMatches.length === 0 ? (
+                  <p className="text-gray-400 text-xs text-center py-3 px-3">
+                    No matches in this chapter.
+                  </p>
+                ) : (
+                  <ul className="space-y-0.5">
+                    {localMatches.map((v) => (
+                      <li key={`local-${v.verse}`}>
+                        <button
+                          type="button"
+                          onClick={() => handleSearchResultClick(v)}
+                          className="w-full text-left rounded-lg px-3 py-2 cursor-pointer transition-colors hover:bg-gray-50"
+                          data-ocid="bible.search_result_item"
+                        >
+                          <span
+                            className="block text-xs font-bold leading-tight mb-0.5"
+                            style={{ color: SKY }}
+                          >
+                            {v.book_name} {v.chapter}:{v.verse}
+                          </span>
+                          <span className="block text-xs text-gray-500 leading-relaxed line-clamp-2">
+                            {v.text.trim()}
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             )}
 
-            {!searchLoading &&
-              !searchError &&
-              searchResults !== null &&
-              searchResults.length === 0 && (
-                <p className="text-gray-400 text-xs text-center py-4 px-3">
-                  No results found. Try a different keyword.
-                </p>
-              )}
-
-            {!searchLoading &&
-              !searchError &&
-              searchResults &&
-              searchResults.length > 0 && (
-                <ul className="space-y-0.5">
-                  {searchResults.map((result, idx) => (
-                    <li
-                      key={`${result.book_name}-${result.chapter}-${result.verse}-${idx}`}
-                    >
-                      <button
-                        type="button"
-                        onClick={() => handleSearchResultClick(result)}
-                        className="w-full text-left rounded-lg px-3 py-2 cursor-pointer transition-colors group hover:bg-gray-50"
-                        data-ocid="bible.search_result_item"
-                      >
-                        <span
-                          className="block text-xs font-bold leading-tight mb-0.5"
-                          style={{ color: SKY }}
-                        >
-                          {result.book_name} {result.chapter}:{result.verse}
-                        </span>
-                        <span className="block text-xs text-gray-500 leading-relaxed line-clamp-2">
-                          {result.text.trim()}
-                        </span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
+            {/* Google search fallback — always shown when query > 1 char */}
+            {trimmedQuery.length > 1 && (
+              <div className="mt-1 pt-1 border-t border-gray-100">
+                <a
+                  href={googleUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-blue-50 transition-colors group"
+                  data-ocid="bible.google_search_link"
+                  aria-label={`Search Google for ${trimmedQuery}`}
+                >
+                  {/* Colorful G badge */}
+                  <span
+                    className="flex-shrink-0 w-5 h-5 rounded flex items-center justify-center text-[11px] font-extrabold leading-none"
+                    style={{
+                      background:
+                        "linear-gradient(135deg, #4285F4 0%, #EA4335 33%, #FBBC05 66%, #34A853 100%)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                      filter: "saturate(1.2)",
+                    }}
+                    aria-hidden="true"
+                  >
+                    G
+                  </span>
+                  <span className="flex-1 text-xs text-gray-600 group-hover:text-blue-700 transition-colors">
+                    Search Google for{" "}
+                    <span className="font-semibold text-gray-800">
+                      &ldquo;{trimmedQuery}&rdquo;
+                    </span>
+                  </span>
+                  <ExternalLink className="w-3.5 h-3.5 text-gray-400 group-hover:text-blue-500 flex-shrink-0 transition-colors" />
+                </a>
+              </div>
+            )}
           </div>
         )}
       </div>

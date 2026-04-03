@@ -33,11 +33,8 @@ const QUOTES = [
 type NavItem = {
   label: string;
   icon: React.ComponentType<{ className?: string }>;
-  /** Tailwind text color class for active state */
   activeColor: string;
-  /** Raw oklch value for the underline indicator */
   indicatorColor: string;
-  /** Tailwind bg class for hover */
   hoverBg: string;
 };
 
@@ -79,7 +76,6 @@ const NAV_ITEMS: NavItem[] = [
   },
 ];
 
-// Tab display names
 const TAB_DISPLAY: Record<string, string> = {
   Devotion: "Daily Devotion",
   Tasks: "My Day Tasks",
@@ -94,9 +90,7 @@ function getDayOfYear(date: Date): number {
   );
 }
 
-interface TopNavBarProps {
-  activeNav: string;
-  setActiveNav: (nav: string) => void;
+interface SlimHeaderProps {
   dateStr: string;
   isToday: boolean;
   onPrevDay: () => void;
@@ -104,24 +98,19 @@ interface TopNavBarProps {
   onBackToToday: () => void;
 }
 
-function TopNavBar({
-  activeNav,
-  setActiveNav,
+function SlimHeader({
   dateStr,
   isToday,
   onPrevDay,
   onNextDay,
   onBackToToday,
-}: TopNavBarProps) {
-  const activeItem = NAV_ITEMS.find((item) => item.label === activeNav);
-
+}: SlimHeaderProps) {
   return (
     <header
-      className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm"
-      aria-label="Main navigation"
+      className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm"
+      aria-label="DayFlow header"
     >
-      {/* Top strip: logo + date selector + live badge */}
-      <div className="flex items-center gap-3 px-4 lg:px-6 h-12 border-b border-gray-100">
+      <div className="flex items-center gap-3 px-4 lg:px-6 h-12">
         {/* Logo */}
         <div className="flex items-center gap-2 flex-shrink-0">
           <div
@@ -206,64 +195,85 @@ function TopNavBar({
           <span className="hidden sm:inline">Live</span>
         </div>
       </div>
-
-      {/* Tab bar row */}
-      <nav
-        className="flex items-end px-2 lg:px-4 overflow-x-auto scrollbar-none"
-        aria-label="Page navigation"
-      >
-        {NAV_ITEMS.map(
-          ({ label, icon: Icon, activeColor, indicatorColor, hoverBg }) => {
-            const isActive = activeNav === label;
-            const displayName = TAB_DISPLAY[label] ?? label;
-            return (
-              <button
-                key={label}
-                type="button"
-                onClick={() => setActiveNav(label)}
-                data-ocid={`nav.${label.toLowerCase()}.tab`}
-                aria-current={isActive ? "page" : undefined}
-                className={[
-                  "relative flex items-center gap-1.5 px-3 lg:px-4 py-2.5 text-sm font-medium transition-colors duration-150 whitespace-nowrap flex-shrink-0 rounded-t-md",
-                  isActive
-                    ? `${activeColor}`
-                    : `text-gray-500 ${hoverBg} hover:text-gray-700`,
-                ].join(" ")}
-              >
-                <Icon
-                  className={[
-                    "w-3.5 h-3.5 flex-shrink-0",
-                    isActive ? activeColor : "text-gray-400",
-                  ].join(" ")}
-                />
-                <span className="text-[13px] font-semibold leading-none">
-                  {displayName}
-                </span>
-
-                {/* Animated underline indicator */}
-                {isActive && (
-                  <motion.span
-                    layoutId="tab-indicator"
-                    className="absolute bottom-0 left-0 right-0 h-[3px] rounded-t-full"
-                    style={{ background: indicatorColor }}
-                    transition={{ type: "spring", stiffness: 400, damping: 35 }}
-                  />
-                )}
-              </button>
-            );
-          },
-        )}
-
-        {/* Active color ghost for smoother spring on first load */}
-        {activeItem && (
-          <span
-            aria-hidden
-            className="sr-only"
-            style={{ color: activeItem.indicatorColor }}
-          />
-        )}
-      </nav>
     </header>
+  );
+}
+
+interface BottomDockProps {
+  activeNav: string;
+  setActiveNav: (nav: string) => void;
+}
+
+function BottomDock({ activeNav, setActiveNav }: BottomDockProps) {
+  return (
+    <nav
+      className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50"
+      aria-label="Page navigation"
+    >
+      <div
+        className="flex items-center gap-1 px-3 py-2 rounded-full bg-white/90 backdrop-blur-xl"
+        style={{
+          boxShadow:
+            "0 8px 32px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.06)",
+        }}
+      >
+        {NAV_ITEMS.map(({ label, icon: Icon, indicatorColor }) => {
+          const isActive = activeNav === label;
+          const displayName = TAB_DISPLAY[label] ?? label;
+          // Build pill background color by injecting opacity into oklch
+          const pillBg = indicatorColor.endsWith(")")
+            ? `${indicatorColor.slice(0, -1)} / 0.12)`
+            : indicatorColor;
+          const pillBorder = indicatorColor.endsWith(")")
+            ? `${indicatorColor.slice(0, -1)} / 0.25)`
+            : indicatorColor;
+          return (
+            <button
+              key={label}
+              type="button"
+              onClick={() => setActiveNav(label)}
+              data-ocid={`nav.${label.toLowerCase()}.tab`}
+              aria-current={isActive ? "page" : undefined}
+              aria-label={displayName}
+              className="relative flex flex-col items-center justify-center gap-0.5 px-3 sm:px-4 py-1.5 rounded-full min-w-[52px] sm:min-w-[64px] transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            >
+              {/* Animated active pill background */}
+              {isActive && (
+                <motion.span
+                  layoutId="dock-pill"
+                  className="absolute inset-0 rounded-full"
+                  style={{
+                    backgroundColor: pillBg,
+                    boxShadow: `0 0 0 1px ${pillBorder}`,
+                  }}
+                  transition={{ type: "spring", stiffness: 420, damping: 38 }}
+                />
+              )}
+
+              {/* Icon — wrapped in a colored span since Icon only accepts className */}
+              <span
+                className="relative z-10 w-5 h-5 flex items-center justify-center transition-colors duration-150"
+                style={{
+                  color: isActive ? indicatorColor : "oklch(0.6 0.01 250)",
+                }}
+              >
+                <Icon className="w-5 h-5" />
+              </span>
+
+              {/* Label */}
+              <span
+                className="relative z-10 text-[10px] font-semibold leading-none whitespace-nowrap transition-colors duration-150 max-w-[56px] sm:max-w-none truncate"
+                style={{
+                  color: isActive ? indicatorColor : "oklch(0.65 0.01 250)",
+                }}
+              >
+                {label === "Devotion" ? "Devotion" : displayName}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </nav>
   );
 }
 
@@ -301,13 +311,11 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[#fafaf8]">
       <Toaster position="top-right" />
 
-      {/* Top tab bar navigation */}
-      <TopNavBar
-        activeNav={activeNav}
-        setActiveNav={setActiveNav}
+      {/* Slim sticky header */}
+      <SlimHeader
         dateStr={dateStr}
         isToday={isToday}
         onPrevDay={goToPrevDay}
@@ -323,12 +331,10 @@ export default function App() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="relative pl-5"
         >
-          {/* Blue left accent bar */}
           <span
             className="absolute left-0 top-1 bottom-1 w-[3px] rounded-full"
             style={{ background: "oklch(0.55 0.22 250 / 0.7)" }}
           />
-          {/* Faint decorative quote mark */}
           <span
             className="absolute -top-4 -left-1 text-[6rem] leading-none font-serif select-none pointer-events-none"
             style={{ color: "oklch(0.55 0.22 250 / 0.06)" }}
@@ -348,10 +354,11 @@ export default function App() {
         </motion.div>
       </div>
 
-      {/* Main content area */}
-      <main className="px-5 lg:px-8 pb-10 flex-1">
+      {/* Main content area — pb-28 so content clears the floating dock */}
+      <main className="px-5 lg:px-8 pb-28 flex-1">
         {activeNav === "Devotion" && (
           <motion.div
+            key="devotion"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
@@ -361,6 +368,7 @@ export default function App() {
         )}
         {activeNav === "Tasks" && (
           <motion.div
+            key="tasks"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
@@ -370,6 +378,7 @@ export default function App() {
         )}
         {activeNav === "Bible" && (
           <motion.div
+            key="bible"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
@@ -379,6 +388,7 @@ export default function App() {
         )}
         {activeNav === "Habits" && (
           <motion.div
+            key="habits"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
@@ -388,6 +398,7 @@ export default function App() {
         )}
         {activeNav === "Journal" && (
           <motion.div
+            key="journal"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
@@ -398,7 +409,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 py-4">
+      <footer className="border-t border-gray-200 py-4 bg-white mb-20">
         <div className="px-5 lg:px-8 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Zap className="w-3.5 h-3.5 text-blue-600" />
@@ -417,6 +428,9 @@ export default function App() {
           </p>
         </div>
       </footer>
+
+      {/* Floating bottom dock */}
+      <BottomDock activeNav={activeNav} setActiveNav={setActiveNav} />
     </div>
   );
 }
