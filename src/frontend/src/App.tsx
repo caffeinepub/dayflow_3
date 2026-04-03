@@ -158,8 +158,8 @@ export default function App() {
       <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[oklch(0.14_0.04_240/0.95)] backdrop-blur-md">
         <div className="max-w-[1200px] mx-auto px-6 h-14 flex items-center gap-6">
           <div className="flex items-center gap-2 min-w-fit">
-            <div className="w-7 h-7 rounded-lg bg-df-teal-dim flex items-center justify-center">
-              <Zap className="w-4 h-4 text-df-teal" />
+            <div className="w-7 h-7 rounded-lg bg-df-red-dim flex items-center justify-center">
+              <Zap className="w-4 h-4 text-df-red" />
             </div>
             <span className="text-base font-semibold text-df-text">
               DayFlow
@@ -178,7 +178,7 @@ export default function App() {
                 data-ocid={`nav.${label.toLowerCase()}.tab`}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
                   activeNav === label
-                    ? "bg-df-teal-dim text-df-teal"
+                    ? "bg-df-red-dim text-df-red"
                     : "text-df-text-muted hover:text-df-text hover:bg-white/[0.04]"
                 }`}
               >
@@ -191,57 +191,99 @@ export default function App() {
       </header>
 
       {/* Page heading */}
-      <div className="max-w-[1200px] mx-auto px-6 pt-8 pb-4 w-full">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1">
-            {/* Day navigation */}
-            <div className="flex items-center gap-2 mb-1">
+      <div className="max-w-[1200px] mx-auto px-6 pt-10 pb-6 w-full">
+        {/* Top row: date selector + live badge */}
+        <div className="flex items-center justify-between mb-8">
+          {/* Polished date selector pill */}
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1 border border-white/[0.08] bg-white/[0.03] rounded-full px-1.5 py-1 backdrop-blur-sm">
               <button
                 type="button"
                 onClick={goToPrevDay}
                 data-ocid="nav.prev_day.button"
-                className="text-df-text-muted hover:text-df-text transition-colors p-0.5 rounded-md hover:bg-white/[0.06]"
                 aria-label="Previous day"
+                className="w-7 h-7 rounded-full flex items-center justify-center text-df-text-muted hover:text-df-text hover:bg-white/[0.10] transition-all duration-150"
               >
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeft className="w-3.5 h-3.5" />
               </button>
-              <p className="text-df-text-muted text-sm font-medium">
-                {dateStr}
+
+              <div className="flex flex-col items-center min-w-[160px] px-1">
+                <span className="text-sm font-medium text-df-text tracking-tight leading-snug">
+                  {dateStr}
+                </span>
                 {isToday && (
-                  <span className="ml-2 text-[10px] text-df-teal font-semibold uppercase tracking-wider">
+                  <span className="text-[10px] font-semibold text-df-red bg-df-red/10 px-2 py-0.5 rounded-full leading-none mt-1">
                     Today
                   </span>
                 )}
-              </p>
+              </div>
+
               <button
                 type="button"
                 onClick={goToNextDay}
                 data-ocid="nav.next_day.button"
-                className="text-df-text-muted hover:text-df-text transition-colors p-0.5 rounded-md hover:bg-white/[0.06]"
                 aria-label="Next day"
+                className="w-7 h-7 rounded-full flex items-center justify-center text-df-text-muted hover:text-df-text hover:bg-white/[0.10] transition-all duration-150"
               >
-                <ChevronRight className="w-4 h-4" />
+                <ChevronRight className="w-3.5 h-3.5" />
               </button>
-              {!isToday && (
-                <button
-                  type="button"
-                  onClick={() => setSelectedDate(new Date())}
-                  data-ocid="nav.today.button"
-                  className="text-[10px] text-df-teal hover:text-df-teal/80 font-medium transition-colors ml-1"
-                >
-                  Back to Today
-                </button>
-              )}
             </div>
-            <h2 className="text-2xl sm:text-3xl font-light text-df-text leading-tight max-w-xl">
-              &ldquo;{quote}&rdquo;
-            </h2>
+
+            {!isToday && (
+              <motion.button
+                initial={{ opacity: 0, x: -6 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -6 }}
+                type="button"
+                onClick={() => setSelectedDate(new Date())}
+                data-ocid="nav.today.button"
+                className="text-xs text-df-red hover:text-df-red/70 font-medium transition-colors hover:underline underline-offset-2"
+              >
+                Back to Today
+              </motion.button>
+            )}
           </div>
-          <div className="flex items-center gap-2 text-xs text-df-text-muted bg-df-navy-light border border-white/[0.06] rounded-lg px-3 py-1.5 whitespace-nowrap">
-            <span className="w-1.5 h-1.5 rounded-full bg-df-green animate-pulse inline-block" />
+
+          {/* Live badge */}
+          <div className="flex items-center gap-2 text-xs text-df-text-muted bg-white/[0.03] border border-white/[0.07] rounded-full px-3 py-1.5 whitespace-nowrap">
+            <span className="relative flex w-1.5 h-1.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-df-green opacity-60" />
+              <span className="relative inline-flex rounded-full w-1.5 h-1.5 bg-df-green" />
+            </span>
             Live
           </div>
         </div>
+
+        {/* Quote — visual centrepiece */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="relative pl-5"
+        >
+          {/* Red left accent bar */}
+          <span
+            className="absolute left-0 top-1 bottom-1 w-[2px] rounded-full"
+            style={{ background: "oklch(0.65 0.22 25 / 0.6)" }}
+          />
+          {/* Faint decorative quote mark */}
+          <span
+            className="absolute -top-4 -left-1 text-[6rem] leading-none font-serif select-none pointer-events-none"
+            style={{ color: "oklch(0.65 0.22 25 / 0.07)" }}
+            aria-hidden="true"
+          >
+            &ldquo;
+          </span>
+          <h2
+            className="text-3xl sm:text-4xl font-light text-df-text leading-snug tracking-tight max-w-3xl relative"
+            style={{
+              fontFamily: "'Playfair Display', 'Georgia', serif",
+              fontStyle: "italic",
+            }}
+          >
+            &ldquo;{quote}&rdquo;
+          </h2>
+        </motion.div>
       </div>
 
       {/* Birthday alert banner */}
@@ -301,7 +343,7 @@ export default function App() {
       <footer className="border-t border-white/[0.06] py-5">
         <div className="max-w-[1200px] mx-auto px-6 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Zap className="w-3.5 h-3.5 text-df-teal" />
+            <Zap className="w-3.5 h-3.5 text-df-red" />
             <span className="text-xs text-df-text-muted font-medium">
               DayFlow
             </span>
@@ -312,7 +354,7 @@ export default function App() {
               href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-df-teal hover:underline"
+              className="text-df-red hover:underline"
             >
               caffeine.ai
             </a>

@@ -67,16 +67,16 @@ export default {
           border: "oklch(var(--sidebar-border))",
           ring: "oklch(var(--sidebar-ring))",
         },
-        /* DayFlow semantic tokens */
+        /* DayFlow semantic tokens — red accent theme */
         df: {
-          teal: "oklch(0.78 0.14 185)",
-          "teal-dim": "oklch(0.78 0.14 185 / 0.15)",
+          teal: "oklch(0.65 0.22 25)",
+          "teal-dim": "oklch(0.65 0.22 25 / 0.15)",
+          red: "oklch(0.65 0.22 25)",
+          "red-dim": "oklch(0.65 0.22 25 / 0.15)",
           purple: "oklch(0.47 0.22 275)",
           "purple-dim": "oklch(0.47 0.22 275 / 0.15)",
           orange: "oklch(0.75 0.18 50)",
           "orange-dim": "oklch(0.75 0.18 50 / 0.15)",
-          red: "oklch(0.62 0.22 25)",
-          "red-dim": "oklch(0.62 0.22 25 / 0.15)",
           green: "oklch(0.76 0.17 155)",
           "green-dim": "oklch(0.76 0.17 155 / 0.15)",
           navy: "oklch(0.12 0.035 240)",
@@ -95,7 +95,7 @@ export default {
       },
       boxShadow: {
         card: "0 4px 24px oklch(0.05 0.01 240 / 0.6), inset 0 1px 0 oklch(1 0 0 / 0.04)",
-        glow: "0 0 24px oklch(0.78 0.14 185 / 0.25)",
+        glow: "0 0 24px oklch(0.65 0.22 25 / 0.25)",
       },
       keyframes: {
         "accordion-down": { from: { height: "0" }, to: { height: "var(--radix-accordion-content-height)" } },
